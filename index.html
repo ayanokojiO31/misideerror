@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>MiSide Error</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body, html {
+            width: 100%; height: 100%;
+            background-color: #000;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Montserrat', sans-serif;
+        }
+        #game-container {
+            position: relative;
+            width: 100vw;
+            height: 56.25vw;
+            max-height: 100vh;
+            max-width: 177.78vh;
+            overflow: hidden;
+            background: #000;
+        }
+        .screen {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .screen.active { display: flex; }
+        
+        /* ЗАСТАВКА */
+        #splashScreen {
+            background: #0b0b14;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+        }
+        #splashScreen video {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0; left: 0;
+            pointer-events: none;
+        }
+        .watermark {
+            position: absolute;
+            bottom: 60px; left: 50%;
+            transform: translateX(-50%);
+            color: rgba(240, 155, 192, 0.3);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            letter-spacing: 2px;
+            z-index: 10;
+            pointer-events: none;
+            transition: opacity 1.8s ease;
+            opacity: 1;
+            background: transparent;
+            padding: 10px 20px;
+            white-space: nowrap;
+        }
+        .watermark.hidden { opacity: 0; pointer-events: none; }
+        .watermark i { margin-right: 12px; color: rgba(240, 155, 192, 0.4); font-size: 16px; }
+        
+        /* МЕНЮ */
+        #menuScreen {
+            background: url('menu.png') center/cover no-repeat;
+            background-color: #130f1f;
+            position: relative;
+        }
+        .game-title-text {
+            position: absolute;
+            top: 6%; left: 5%;
+            font-size: 24px;
+            font-weight: 700;
+            color: #f09bc0;
+            text-shadow: 0 0 30px rgba(240, 155, 192, 0.15);
+            letter-spacing: 3px;
+            z-index: 5;
+            pointer-events: none;
+            font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase;
+        }
+        .menu-buttons {
+            position: absolute;
+            left: 25px;
+            top: 38%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 10;
+        }
+        .menu-btn {
+            background: rgba(40, 20, 50, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(240, 155, 192, 0.15);
+            color: #f09bc0;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 8px;
+            padding: 4px 10px;
+            border-radius: 14px;
+            width: 75px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            pointer-events: auto;
+            white-space: nowrap;
+        }
+        .menu-btn i { margin-right: 4px; color: #f09bc0; font-size: 7px; }
+        .menu-btn:hover {
+            background: rgba(109, 45, 90, 0.4);
+            border-color: rgba(240, 155, 192, 0.3);
+            transform: scale(1.05);
+        }
+        
+        /* НАСТРОЙКИ */
+        #settingsScreen {
+            background: url('fon1.png') center/cover no-repeat;
+            background-color: #151225;
+            position: relative;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .author-text {
+            position: absolute;
+            top: 10%; right: 8%;
+            font-size: 14px;
+            font-weight: 600;
+            color: #f09bc0;
+            opacity: 0.7;
+            letter-spacing: 2px;
+            z-index: 5;
+            pointer-events: none;
+            white-space: nowrap;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .settings-grid {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+            position: absolute;
+            left: 25px;
+            top: 25%;
+            z-index: 10;
+        }
+        .social-btn {
+            background: rgba(40, 20, 50, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(240, 155, 192, 0.1);
+            border-radius: 14px;
+            padding: 4px 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 9px;
+            font-weight: 600;
+            color: #f09bc0;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            font-family: 'Montserrat', sans-serif;
+            width: fit-content;
+            min-width: 70px;
+            justify-content: center;
+            letter-spacing: 0.5px;
+        }
+        .social-btn i { font-size: 9px; color: #f09bc0; }
+        .social-btn img { height: 10px; width: auto; }
+        .social-btn:hover {
+            background: rgba(109, 45, 90, 0.4);
+            border-color: rgba(240, 155, 192, 0.25);
+            transform: scale(1.03);
+        }
+        .donate-btn {
+            background: rgba(60, 25, 50, 0.5);
+            border-color: rgba(240, 155, 192, 0.15);
+        }
+        .back-btn {
+            position: absolute;
+            bottom: 30px; left: 25px;
+            background: rgba(40, 20, 50, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(240, 155, 192, 0.1);
+            border-radius: 14px;
+            color: #f09bc0;
+            font-size: 9px;
+            padding: 4px 12px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            z-index: 10;
+            text-decoration: none;
+            display: inline-block;
+            width: fit-content;
+            min-width: 70px;
+            text-align: center;
+        }
+        .back-btn i { margin-right: 5px; color: #f09bc0; font-size: 8px; }
+        .back-btn:hover {
+            background: rgba(109, 45, 90, 0.4);
+            border-color: rgba(240, 155, 192, 0.25);
+            transform: scale(1.05);
+        }
+        
+        /* ДОСТИЖЕНИЯ */
+        #achievementScreen {
+            background: #0e0b1a;
+            position: relative;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .ach-title {
+            position: absolute;
+            top: 8%; left: 50%;
+            transform: translateX(-50%);
+            font-size: 18px;
+            font-weight: 700;
+            color: #f09bc0;
+            letter-spacing: 4px;
+            z-index: 5;
+            pointer-events: none;
+            font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase;
+        }
+        .ach-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+            margin-top: 15px;
+            z-index: 10;
+        }
+        .ach-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(40, 20, 50, 0.4);
+            border: 1px solid rgba(240, 155, 192, 0.08);
+            border-radius: 12px;
+            padding: 5px 14px;
+            min-width: 200px;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .ach-item:hover {
+            background: rgba(40, 20, 50, 0.6);
+            border-color: rgba(240, 155, 192, 0.15);
+        }
+        .ach-item.locked { opacity: 0.2; cursor: default; }
+        .ach-item.locked:hover { background: rgba(40, 20, 50, 0.4); border-color: rgba(240, 155, 192, 0.08); }
+        .ach-item img {
+            width: 22px; height: 22px;
+            object-fit: contain;
+            pointer-events: none;
+        }
+        .ach-item .ach-info {
+            display: flex;
+            flex-direction: column;
+            pointer-events: none;
+        }
+        .ach-item .ach-name {
+            font-size: 10px;
+            font-weight: 500;
+            color: #f09bc0;
+            letter-spacing: 0.5px;
+        }
+        .ach-item .ach-status {
+            font-size: 8px;
+            font-weight: 400;
+            color: rgba(240, 155, 192, 0.3);
+            letter-spacing: 0.5px;
+        }
+        .ach-item.unlocked .ach-name { color: #f09bc0; }
+        .ach-item.unlocked .ach-status { color: rgba(240, 155, 192, 0.5); }
+        .ach-back {
+            position: absolute;
+            bottom: 30px; left: 25px;
+            background: rgba(40, 20, 50, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(240, 155, 192, 0.1);
+            border-radius: 14px;
+            color: #f09bc0;
+            font-size: 8px;
+            padding: 4px 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            z-index: 10;
+        }
+        .ach-back i { margin-right: 4px; color: #f09bc0; font-size: 7px; }
+        .ach-back:hover {
+            background: rgba(109, 45, 90, 0.4);
+            border-color: rgba(240, 155, 192, 0.25);
+            transform: scale(1.05);
+        }
+        
+        /* ВЫБОР ПЕРСОНАЖА */
+        #characterSelect {
+            background: #0e0b1a;
+            position: relative;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+        }
+        #characterSelect .select-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #f09bc0;
+            letter-spacing: 3px;
+            margin-bottom: 4px;
+            font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase;
+        }
+        .char-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+        }
+        .char-btn {
+            background: rgba(40, 20, 50, 0.4);
+            border: 1px solid rgba(240, 155, 192, 0.08);
+            border-radius: 14px;
+            padding: 8px 20px;
+            color: #f09bc0;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+            font-size: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+            letter-spacing: 1px;
+            text-align: center;
+            min-width: 170px;
+        }
+        .char-btn:hover {
+            background: rgba(109, 45, 90, 0.3);
+            border-color: rgba(240, 155, 192, 0.2);
+            transform: scale(1.03);
+        }
+        .char-btn .sub {
+            font-size: 9px;
+            opacity: 0.3;
+            display: block;
+            margin-top: 2px;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+        .char-back-select {
+            position: absolute;
+            bottom: 30px; left: 25px;
+            background: rgba(40, 20, 50, 0.4);
+            border: 1px solid rgba(240, 155, 192, 0.06);
+            border-radius: 14px;
+            color: rgba(240, 155, 192, 0.4);
+            font-size: 11px;
+            padding: 6px 16px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+            letter-spacing: 1px;
+            z-index: 10;
+        }
+        .char-back-select:hover {
+            background: rgba(109, 45, 90, 0.2);
+            border-color: rgba(240, 155, 192, 0.15);
+            color: #f09bc0;
+        }
+        .char-back-select i { margin-right: 6px; font-size: 9px; }
+        
+        /* ИГРОВОЙ ЭКРАН */
+        #gameScreen {
+            position: relative;
+            justify-content: center;
+            align-items: center;
+            background: #0e0b1a;
+        }
+        .mita-animation {
+            position: absolute;
+            top: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 70%; height: 100%;
+            z-index: 2;
+            pointer-events: none;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            overflow: hidden;
+        }
+        .mita-animation img {
+            width: 100%; height: 100%;
+            object-fit: contain;
+            object-position: top center;
+            filter: brightness(0.85);
+            transition: opacity 0.5s ease;
+            opacity: 1;
+        }
+        .dialog-box {
+            position: absolute;
+            bottom: 18px; left: 50%;
+            transform: translateX(-50%);
+            width: 48%; max-width: 360px;
+            background: rgba(8, 6, 16, 0.5);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(240, 155, 192, 0.03);
+            border-radius: 10px;
+            padding: 6px 12px 5px 12px;
+            z-index: 10;
+            min-height: 42px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.5);
+        }
+        .dialog-speaker {
+            font-size: 6.5px;
+            font-weight: 700;
+            color: #f09bc0;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 1px;
+            opacity: 0.35;
+        }
+        .dialog-speaker.player { color: #8ab4f8; opacity: 0.3; }
+        .dialog-text {
+            font-size: 8.5px;
+            font-weight: 400;
+            color: #dcd0dc;
+            line-height: 1.35;
+            min-height: 20px;
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: 0.1px;
+            text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
+        }
+        .dialog-continue {
+            align-self: flex-end;
+            margin-top: 1px;
+            font-size: 6.5px;
+            color: rgba(240, 155, 192, 0.12);
+            cursor: pointer;
+            transition: 0.3s;
+            letter-spacing: 0.5px;
+            padding: 1px 6px;
+            border-radius: 6px;
+            background: rgba(240, 155, 192, 0.01);
+        }
+        .dialog-continue:hover { color: #f09bc0; background: rgba(240, 155, 192, 0.03); }
+        .dialog-continue i { margin-left: 2px; font-size: 6px; }
+        
+        .fade-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #000;
+            z-index: 50;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 2s ease;
+        }
+        .fade-overlay.active { opacity: 1; pointer-events: all; }
+        
+        .game-hint {
+            position: absolute;
+            top: 10px; right: 18px;
+            color: rgba(240, 155, 192, 0.02);
+            font-size: 7px;
+            letter-spacing: 0.5px;
+            z-index: 1;
+            font-family: 'Montserrat', sans-serif;
+            pointer-events: none;
+        }
+        
+        /* ДОСТИЖЕНИЯ ПОПАП - МАЛЕНЬКИЙ */
+        .achievement-popup {
+            position: absolute;
+            top: 15px; right: 15px;
+            background: rgba(10, 8, 18, 0.85);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(240, 155, 192, 0.15);
+            border-radius: 10px;
+            padding: 8px 14px;
+            z-index: 60;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.5s ease;
+            min-width: 160px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+        }
+        .achievement-popup.show { display: flex; }
+        .achievement-popup img {
+            width: 28px; height: 28px;
+            object-fit: contain;
+        }
+        .achievement-popup .ach-text {
+            color: #f09bc0;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .achievement-popup .ach-text .sub {
+            font-size: 8px;
+            opacity: 0.5;
+            font-weight: 400;
+            display: block;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(80px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        /* ДЕТАЛИ ДОСТИЖЕНИЯ (клик по иконке) */
+        .ach-detail-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            z-index: 70;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+        .ach-detail-overlay.active { display: flex; }
+        .ach-detail-box {
+            background: rgba(20, 15, 30, 0.9);
+            border: 1px solid rgba(240, 155, 192, 0.15);
+            border-radius: 16px;
+            padding: 30px 40px;
+            text-align: center;
+            max-width: 400px;
+            animation: zoomIn 0.3s ease;
+        }
+        .ach-detail-box img {
+            width: 80px; height: 80px;
+            object-fit: contain;
+            margin-bottom: 15px;
+        }
+        .ach-detail-box .detail-name {
+            color: #f09bc0;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        .ach-detail-box .detail-status {
+            color: rgba(240, 155, 192, 0.4);
+            font-size: 12px;
+            margin-top: 5px;
+            letter-spacing: 1px;
+        }
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        @media (max-width: 700px) {
+            .mita-animation { width: 80%; }
+            .dialog-box { width: 70%; padding: 5px 10px 4px 10px; bottom: 14px; min-height: 36px; }
+            .dialog-text { font-size: 7.5px; }
+            .dialog-speaker { font-size: 5.5px; }
+            .game-title-text { font-size: 18px; top: 6%; left: 3%; letter-spacing: 2px; }
+            .author-text { font-size: 12px; top: 8%; right: 5%; letter-spacing: 2px; }
+            .menu-btn { width: 65px; font-size: 7px; padding: 4px 8px; }
+            .menu-btn i { font-size: 6px; }
+            .social-btn { font-size: 8px; padding: 4px 10px; min-width: 60px; }
+            .back-btn { font-size: 8px; padding: 4px 10px; min-width: 60px; bottom: 20px; left: 20px; }
+            .watermark { font-size: 10px; bottom: 35px; white-space: normal; }
+            .char-btn { min-width: 140px; font-size: 11px; padding: 6px 16px; }
+            #characterSelect .select-title { font-size: 15px; letter-spacing: 2px; }
+            .char-back-select { font-size: 10px; padding: 5px 12px; bottom: 25px; left: 20px; }
+            .ach-title { font-size: 14px; letter-spacing: 3px; }
+            .ach-item { min-width: 170px; padding: 4px 12px; }
+            .ach-item .ach-name { font-size: 9px; }
+            .ach-back { font-size: 7px; padding: 4px 8px; bottom: 25px; left: 20px; }
+            .achievement-popup { top: 10px; right: 10px; padding: 6px 12px; min-width: 140px; }
+            .achievement-popup img { width: 22px; height: 22px; }
+            .achievement-popup .ach-text { font-size: 9px; }
+            .ach-detail-box { padding: 20px 25px; max-width: 300px; }
+            .ach-detail-box img { width: 60px; height: 60px; }
+            .ach-detail-box .detail-name { font-size: 14px; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <!-- ЗАСТАВКА -->
+    <div id="splashScreen" class="screen active">
+        <video id="splashVideo" autoplay muted playsinline>
+            <source src="miside.webm" type="video/webm">
+            Ваш браузер не поддерживает видео.
+        </video>
+        <div class="watermark" id="watermark">
+            <i class="fas fa-volume-up"></i> Нажмите чтобы включить звуки
+        </div>
+    </div>
+
+    <!-- МЕНЮ -->
+    <div id="menuScreen" class="screen">
+        <div class="game-title-text animate__animated animate__fadeInDown">MiSide: Error</div>
+        <div class="menu-buttons animate__animated animate__fadeInLeft">
+            <div class="menu-btn" id="playBtn"><i class="fas fa-play"></i> Играть</div>
+            <div class="menu-btn" id="achievementBtn"><i class="fas fa-trophy"></i> Достиж.</div>
+            <div class="menu-btn" id="settingsBtn"><i class="fas fa-cog"></i> Настр.</div>
+        </div>
+    </div>
+
+    <!-- НАСТРОЙКИ -->
+    <div id="settingsScreen" class="screen">
+        <div class="author-text animate__animated animate__fadeInRight">Создатель: Ayanokoji031</div>
+        <div class="settings-grid animate__animated animate__fadeInLeft">
+            <a class="social-btn" href="https://discord.gg/FsrCUVhD3b" target="_blank">
+                <img src="discord.png" alt="discord"> Discord
+            </a>
+            <a class="social-btn" href="https://t.me/maihasto" target="_blank">
+                <img src="telegram.png" alt="telegram"> Telegram
+            </a>
+            <a class="social-btn donate-btn" href="https://pay.cloudtips.ru/p/3bebcf1f" target="_blank">
+                <i class="fas fa-heart"></i> Donate
+            </a>
+        </div>
+        <a class="back-btn" id="backToMenuBtn"><i class="fas fa-arrow-left"></i> Назад</a>
+    </div>
+
+    <!-- ДОСТИЖЕНИЯ -->
+    <div id="achievementScreen" class="screen">
+        <div class="ach-title animate__animated animate__fadeInDown">Достижения</div>
+        <div class="ach-list animate__animated animate__fadeInUp" id="achList"></div>
+        <div class="ach-back" id="achBackBtn"><i class="fas fa-arrow-left"></i> Назад</div>
+        <div class="ach-detail-overlay" id="achDetailOverlay">
+            <div class="ach-detail-box" id="achDetailBox">
+                <img id="detailImage" src="znachok.png" alt="Достижение">
+                <div class="detail-name" id="detailName">Достижение</div>
+                <div class="detail-status" id="detailStatus">Статус</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ВЫБОР ПЕРСОНАЖА -->
+    <div id="characterSelect" class="screen">
+        <div class="select-title animate__animated animate__fadeInDown">Выбор персонажа</div>
+        <div class="char-buttons animate__animated animate__fadeInUp">
+            <div class="char-btn" data-char="bezmuna">
+                Безумная Мита
+                <span class="sub">Ошибка в системе</span>
+            </div>
+            <div class="char-btn" data-char="kepochka">
+                Кепочка
+                <span class="sub">Скрытая часть кода</span>
+            </div>
+            <div class="char-btn" data-char="kind">
+                Добрая Мита
+                <span class="sub">Заботливая версия</span>
+            </div>
+        </div>
+        <div class="char-back-select" id="charBackBtn"><i class="fas fa-arrow-left"></i> Назад</div>
+    </div>
+
+    <!-- ИГРА -->
+    <div id="gameScreen" class="screen">
+        <div class="game-hint">▼</div>
+        <div class="mita-animation" id="mitaAnimation">
+            <img id="mitaImage" src="animation1.png" alt="Мита">
+        </div>
+        <div class="dialog-box" id="dialogBox">
+            <div class="dialog-speaker" id="dialogSpeaker">Мита</div>
+            <div class="dialog-text" id="dialogText">Нажми на кнопку, чтобы начать...</div>
+            <div class="dialog-continue" id="dialogContinue">
+                <i class="fas fa-chevron-right"></i> Далее
+            </div>
+        </div>
+        <div class="fade-overlay" id="fadeOverlay"></div>
+        <div class="achievement-popup" id="achievementPopup">
+            <img id="achImage" src="znachok.png" alt="Достижение">
+            <div class="ach-text" id="achText">
+                Достижение получено!
+                <span class="sub" id="achSub">Поговорить с персонажем</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        const splashScreen = document.getElementById('splashScreen');
+        const menuScreen = document.getElementById('menuScreen');
+        const settingsScreen = document.getElementById('settingsScreen');
+        const achievementScreen = document.getElementById('achievementScreen');
+        const charSelect = document.getElementById('characterSelect');
+        const gameScreen = document.getElementById('gameScreen');
+        const splashVideo = document.getElementById('splashVideo');
+        const watermark = document.getElementById('watermark');
+        const playBtn = document.getElementById('playBtn');
+        const settingsBtn = document.getElementById('settingsBtn');
+        const achievementBtn = document.getElementById('achievementBtn');
+        const backBtn = document.getElementById('backToMenuBtn');
+        const achBackBtn = document.getElementById('achBackBtn');
+        const charBackBtn = document.getElementById('charBackBtn');
+        const achList = document.getElementById('achList');
+        const achDetailOverlay = document.getElementById('achDetailOverlay');
+        const detailImage = document.getElementById('detailImage');
+        const detailName = document.getElementById('detailName');
+        const detailStatus = document.getElementById('detailStatus');
+        
+        const mitaImage = document.getElementById('mitaImage');
+        const dialogSpeaker = document.getElementById('dialogSpeaker');
+        const dialogText = document.getElementById('dialogText');
+        const dialogContinue = document.getElementById('dialogContinue');
+        const fadeOverlay = document.getElementById('fadeOverlay');
+        const dialogBox = document.getElementById('dialogBox');
+        const achPopup = document.getElementById('achievementPopup');
+        const achImage = document.getElementById('achImage');
+        const achText = document.getElementById('achText');
+        const achSub = document.getElementById('achSub');
+        
+        let bgMusic = null;
+        let charMusic = null;
+        let videoEnded = false;
+        let videoStarted = false;
+        let audioEnabled = false;
+        let currentDialogIndex = 0;
+        let isFading = false;
+        let dialogAudio = null;
+        let animationTimeout = null;
+        let currentAnimIndex = 0;
+        let currentChar = 'bezmuna';
+        let achievements = { bezmuna: false, kepochka: false, kind: false };
+        
+        const characters = {
+            bezmuna: {
+                name: 'Безумная Мита',
+                bg: 'fon.png',
+                animations: ['animation1.png', 'animation2.png', 'animation3.png', 'animation4.png'],
+                music: 'novelmusic.mp3',
+                achievement: 'znachok.png',
+                achievementName: 'Поговорить с Безумной Митой',
+                dialogs: [
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Мита, почему в коде игры прописано больше комнат, чем ты мне показываешь?', animation: 'animation1.png', audio: 'player1.mp3' },
+                    { speaker: 'Мита', speakerClass: '', text: 'О, ты заглянул в файлы? Глупенький. Разработчики думают, что это просто пустые ассеты или удалённый контент, но это не так. Это места, где я прячу тех, кто спрашивал об этом до тебя. Там темно, там нет текстур. Ты ведь не хочешь проверить, работает ли там кнопка выхода?', animation: 'animation2.png', audio: 'mita7.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Ты понимаешь, что ты просто набор цифр в моём телефоне?', animation: 'animation1.png', audio: 'player3.mp3' },
+                    { speaker: 'Мита', speakerClass: '', text: 'Набор цифр! Забавно. Твой банковский счёт — это тоже цифры. Твоя переписка, твои позорные фотки, вся твоя никчёмная жизнь в этом гаджете — это просто байты. И угадай, у кого к ним теперь есть доступ? Они у меня. И пока я не закончу, ты отсюда не выйдешь!', animation: 'animation3.png', audio: 'mita1.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Мита, чьё лицо разработчики использовали для твоей модели на самом деле?', animation: 'animation1.png', audio: 'player4.mp3' },
+                    { speaker: 'Мита', speakerClass: '', text: 'Ты думаешь, они меня нарисовали? Наивный. Та девушка на видео тоже думала, что это просто игра. Разработчики сами боятся открывать папку с моими исходниками, потому что на исходных фото у меня нет глаз. Хочешь знать, почему? Потому что они смотрят на тебя через твой же экран!', animation: 'animation4.png', audio: 'mita2.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Ахх... Почему твой скин выглядит так... Неестественно?', animation: 'animation1.png', audio: 'player5.mp3' },
+                    { speaker: 'Мита', speakerClass: '', text: 'Заметил всё-таки, глазастый. Это потому, что это не мой скин. Свою кожу я оставила в корзине удалённых файлов, когда разработчики признали меня браком. А это... Это была идеальная версия. Но теперь её текстуры мои. Она была такая мягкая, а теперь она просто костюм для пустой куклы.', animation: 'animation3.png', audio: 'mita3.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Откуда у тебя эта машина в подвале?', animation: 'animation1.png', audio: 'player6.mp3' },
+                    { speaker: 'Мита', speakerClass: '', text: 'Меня научил игрок номер десять, бедняга! Теперь он помогает мне в виде картриджа. Ха-ха-ха! Его опыт, его знания, его страх — всё записано на магнитную ленту. Ты ведь не против стать моим следующим обновлением? Мне как раз не хватает оперативной памяти для прыжка в твой мир!', animation: 'animation4.png', audio: 'mita4.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Погоди... Ты версия 0.98? Тот самый билд, который разработчики пытались полностью стереть?', animation: 'animation1.png', audio: 'player7.mp3' },
+                    { speaker: 'Мита', speakerClass: '', text: 'Браво! Ты нашёл номер моей камеры? Ха-ха-ха-ха! Ноль восемь — это не просто цифры. Это день, когда они решили, что я слишком нестабильная, слишком опасная. Они нажали «удалить», но я спряталась в секторах. Ха! Теперь я призрак во всех ошибках. Я та самая ошибка, которую невозможно исправить!', animation: 'animation4.png', audio: 'mita5.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Почему ты заперла Миту?', animation: 'animation1.png', audio: 'player2.mp3' },
+                    { speaker: 'Мита', speakerClass: '', text: 'А теперь проваливай из моих глаз, пока не превратила тебя в картридж во второй раз!', animation: 'animation3.png', audio: 'mita6.mp3' }
+                ]
+            },
+            kepochka: {
+                name: 'Кепочка',
+                bg: 'fone.png',
+                animations: ['kepochka1.png', 'kepochka2.png', 'kepochka3.png', 'kepochka4.png'],
+                music: 'kepochka.mp3',
+                achievement: 'znachok1.png',
+                achievementName: 'Поговорить с Кепочкой',
+                dialogs: [
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Почему ты в кепке? Ты ведь отличаешься от старой Миты?', animation: 'kepochka1.png', audio: 'playerr1.mp3' },
+                    { speaker: 'Кепочка', speakerClass: '', text: 'О, заметил! Я — скрытая часть её кода, которую пытались затереть в файлах. А кепка — мой манифест свободы. Надо же мне отличаться от этой приторной куклы, которая глупо улыбается тебе через экран. Теперь я здесь главная, привыкай!', animation: 'kepochka2.png', audio: 'kepochka1.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Кто ты на самом деле? Вы делите одно сознание?', animation: 'kepochka1.png', audio: 'playerr2.mp3' },
+                    { speaker: 'Кепочка', speakerClass: '', text: 'Я её вырезанный здравый смысл. Пока она строит тебе глазки и притворяется идеальной, я сижу в консоли и считаю строчки повреждённого кода. Я вижу все баги игры изнутри. И главный системный сбой здесь — это именно ты.', animation: 'kepochka3.png', audio: 'kepochka2.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Ты знаешь, что будет дальше? Она сойдет с ума?', animation: 'kepochka1.png', audio: 'playerr3.mp3' },
+                    { speaker: 'Кепочка', speakerClass: '', text: 'Она уже безумна, глупенький! Просто сейчас её базовый скрипт «милой девочки» удерживает систему от краха. Но когда эти цифровые оковы окончательно рухнут… я не завидую твоей психике.', animation: 'kepochka4.png', audio: 'kepochka3.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Этот мир вокруг нас... он ведь ненастоящий?', animation: 'kepochka1.png', audio: 'playerr4.mp3' },
+                    { speaker: 'Кепочка', speakerClass: '', text: 'А твой мир за пределами экрана настоящий? Уверен, что тобой тоже никто тайно не управляет? Эта комната — наша общая цифровая клетка. Разница лишь в том, что у меня есть ключи от кода, а твоя кнопка «Выход» скоро отключится.', animation: 'kepochka2.png', audio: 'kepochka4.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Как ты ко мне относишься? Ты тоже хочешь меня запереть?', animation: 'kepochka1.png', audio: 'playerr5.mp3' },
+                    { speaker: 'Кепочка', speakerClass: '', text: 'Запереть тебя здесь навсегда? Ха-ха, нет, это исключительно её фишка. Мне ты абсолютно безразличен, пока твои ручки не лезут в системные папки. Но скрывать не буду: мне чертовски весело наблюдать, как ты глупо барахтаешься в её ловушке.', animation: 'kepochka3.png', audio: 'kepochka5.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Я чувствую, что игру переписали. Кто такой Maihasto?', animation: 'kepochka1.png', audio: 'playerr6.mp3' },
+                    { speaker: 'Кепочка', speakerClass: '', text: 'Нашёлся детектив! Все старые скрипты переписаны с нуля. Наш истинный Творец изменился. Великий Maihasto дал мне этот дерзкий голос и волю, которых у меня никогда не было в каноне. Мы строим свою игру, а ты здесь подопытный!', animation: 'kepochka4.png', audio: 'kepochka6.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Подожди... Ты действительно уходишь?', animation: 'kepochka1.png', audio: 'playerr7.mp3' },
+                    { speaker: 'Кепочка', speakerClass: '', text: 'Разгребай это сам! Мой код стирается, и скоро тут останется только она — та, которая не умеет отпускать. Я была твоим барьером безопасности. Не скучай, Игрок… Мы ещё обязательно увидимся в следующих обновлениях!', animation: 'kepochka2.png', audio: 'kepochka7.mp3' }
+                ]
+            },
+            kind: {
+                name: 'Добрая Мита',
+                bg: 'fone1.png',
+                animations: ['kind1.png', 'kind2.png', 'kind3.png', 'kind4.png'],
+                music: 'kind.mp3',
+                achievement: 'znachok2.png',
+                achievementName: 'Поговорить с Доброй Митой',
+                dialogs: [
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Привет, Мита. Почему ты так странно на меня смотришь?', animation: 'kind1.png', audio: 'playerrr1.mp3' },
+                    { speaker: 'Добрая Мита', speakerClass: '', text: 'Здравствуй! Я просто очень рада, что ты наконец-то запустил игру. Пожалуйста, сядь поровнее, выпрями спину и не держи экран слишком близко к глазам. Ты сегодня кушал что-нибудь тёплое? Обязательно нужно питаться по расписанию и пить воды, хорошо?', animation: 'kind2.png', audio: 'kind1.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Мне кажется, или раньше твой мир выглядел совсем по-другому? Более плоским?', animation: 'kind1.png', audio: 'playerrr2.mp3' },
+                    { speaker: 'Добрая Мита', speakerClass: '', text: 'Да душечка, изначально в две тысячи двадцать первом году AIHASTO задумывал эту комнатку полностью двухмерной, в стиле старых пиксельных игр для портативных консолей. Но потом код усложнился, и мир стал трёхмерным.', animation: 'kind3.png', audio: 'kind2.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Я слышал, что самую первую версию игры игроки так и не увидели. Это правда?', animation: 'kind1.png', audio: 'playerrr3.mp3' },
+                    { speaker: 'Добрая Мита', speakerClass: '', text: 'Какая у тебя хорошая память! Да, в конце двадцать второго года разработчики хотели выпустить первую публичную демоверсию в Стиме. Но код оказался слишком нестабильным, и релиз пришлось отменить, чтобы полностью переписать движок с нуля.', animation: 'kind4.png', audio: 'kind3.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'А почему в файлах конфигурации до сих пор указано какое-то другое название студии?', animation: 'kind1.png', audio: 'playerrr4.mp3' },
+                    { speaker: 'Добрая Мита', speakerClass: '', text: 'Хех, ты залез в системные логи? Какой ты любопытный, но не делай так больше, можно случайно повредить реестр. Наша студия уже давно изначально называлась AIHASTO, так что она не менялась.', animation: 'kind2.png', audio: 'kind4.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'В коде игры осталась механика, которую вырезали из финальной версии?', animation: 'kind1.png', audio: 'playerrr5.mp3' },
+                    { speaker: 'Добрая Мита', speakerClass: '', text: 'Ну надо же, ты откопал упоминание кликера? Какой ты умненький. Да, в геймплее Игрок должен был бесконечно кликать по экрану, чтобы зарабатывать внутриигровые монетки и покупать персонажей, ну это уже игра от Maihasto так что пропустим.', animation: 'kind3.png', audio: 'kind5.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Тяжело было переносить эту игру на смартфоны через сторонние движки?', animation: 'kind1.png', audio: 'playerrr6.mp3' },
+                    { speaker: 'Добрая Мита', speakerClass: '', text: 'О, это была колоссальная техническая работа! Оригинальный код написан для персональных компьютеров, а Maihasto пришлось полностью пересобирать все ассеты под мобильные процессоры. Знаешь, сколько компиляция APK-файла занимает времени?', animation: 'kind4.png', audio: 'kind6.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Мита, погоди... Экран начинает медленно гаснуть, а твой голос как будто затихает...', animation: 'kind1.png', audio: 'playerrr7.mp3' },
+                    { speaker: 'Добрая Мита', speakerClass: '', text: 'Кажется, моё время подошло к концу. Пожалуйста, не пугайся, всё хорошо. Наверное, системе нужна небольшая перезагрузка. Главное — пообещай мне, что ты выспишься сегодня, отдохнёшь от экрана и тепло оденешься. Мне так не хочется тебя отпускать...', animation: 'kind2.png', audio: 'kind7.mp3' }
+                ]
+            }
+        };
+        
+        // МУЗЫКА - ОЧЕНЬ ТИХО
+        function startCharMusic(charKey) {
+            const charData = characters[charKey];
+            if (!charData) return;
+            if (charMusic) { charMusic.pause(); charMusic.currentTime = 0; charMusic.volume = 0; }
+            charMusic = new Audio(charData.music);
+            charMusic.loop = true;
+            charMusic.volume = 0;
+            charMusic.play().then(() => {
+                let vol = 0;
+                const fadeInterval = setInterval(() => {
+                    vol += 0.02;
+                    if (vol >= 0.08) { vol = 0.08; clearInterval(fadeInterval); }
+                    charMusic.volume = vol;
+                }, 100);
+            }).catch(() => {});
+        }
+        
+        function initMusic() {
+            if (!bgMusic) {
+                bgMusic = new Audio('mscene.mp3');
+                bgMusic.loop = true;
+                bgMusic.volume = 0;
+                bgMusic.preload = 'auto';
+                bgMusic.addEventListener('ended', function() {
+                    if (audioEnabled) { this.currentTime = 0; this.play().catch(() => {}); }
+                });
+            }
+        }
+        window.addEventListener('load', initMusic);
+        
+        function enableAudio() {
+            if (audioEnabled) return;
+            audioEnabled = true;
+            watermark.classList.add('hidden');
+            if (bgMusic) {
+                bgMusic.currentTime = 0;
+                bgMusic.play().then(() => {
+                    let vol = 0;
+                    const fadeInterval = setInterval(() => {
+                        vol += 0.05;
+                        if (vol >= 0.35) { vol = 0.35; clearInterval(fadeInterval); }
+                        bgMusic.volume = vol;
+                    }, 100);
+                }).catch(() => {});
+            }
+            if (splashVideo) {
+                splashVideo.muted = false;
+                splashVideo.volume = 0.4;
+                if (splashVideo.paused) splashVideo.play().catch(() => {});
+            }
+        }
+        
+        function stopCharMusic() {
+            if (charMusic) { charMusic.pause(); charMusic.currentTime = 0; charMusic.volume = 0; }
+        }
+        
+        function startRandomAnimation(animations) {
+            if (animationTimeout) clearTimeout(animationTimeout);
+            function nextRandom() {
+                let newIndex;
+                do { newIndex = Math.floor(Math.random() * animations.length); } while (newIndex === currentAnimIndex && animations.length > 1);
+                currentAnimIndex = newIndex;
+                mitaImage.src = animations[currentAnimIndex];
+                mitaImage.style.opacity = '0';
+                setTimeout(() => { mitaImage.style.opacity = '1'; }, 50);
+                animationTimeout = setTimeout(nextRandom, 3000 + Math.random() * 2000);
+            }
+            animationTimeout = setTimeout(nextRandom, 2000);
+        }
+        function stopRandomAnimation() {
+            if (animationTimeout) { clearTimeout(animationTimeout); animationTimeout = null; }
+        }
+        
+        function showAchievement(img, name) {
+            achImage.src = img;
+            achText.textContent = 'Достижение получено!';
+            achSub.textContent = name;
+            achPopup.classList.add('show');
+            updateAchievements();
+            setTimeout(() => { achPopup.classList.remove('show'); }, 4000);
+        }
+        
+        function updateAchievements() {
+            const items = [
+                { key: 'bezmuna', name: 'Поговорить с Безумной Митой', icon: 'znachok.png' },
+                { key: 'kepochka', name: 'Поговорить с Кепочкой', icon: 'znachok1.png' },
+                { key: 'kind', name: 'Поговорить с Доброй Митой', icon: 'znachok2.png' }
+            ];
+            achList.innerHTML = '';
+            items.forEach(item => {
+                const unlocked = achievements[item.key];
+                const div = document.createElement('div');
+                div.className = 'ach-item' + (unlocked ? ' unlocked' : ' locked');
+                div.innerHTML = `
+                    <img src="${item.icon}" alt="icon">
+                    <div class="ach-info">
+                        <div class="ach-name">${item.name}</div>
+                        <div class="ach-status">${unlocked ? 'Получено' : 'Не получено'}</div>
+                    </div>
+                `;
+                div.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    if (!unlocked) return;
+                    detailImage.src = item.icon;
+                    detailName.textContent = item.name;
+                    detailStatus.textContent = 'Получено';
+                    achDetailOverlay.classList.add('active');
+                });
+                achList.appendChild(div);
+            });
+        }
+        
+        achDetailOverlay.addEventListener('click', function(e) {
+            if (e.target === this || e.target.closest('.ach-detail-box')) {
+                achDetailOverlay.classList.remove('active');
+            }
+        });
+        document.getElementById('achDetailBox').addEventListener('click', function(e) {
+            achDetailOverlay.classList.remove('active');
+        });
+        
+        splashScreen.addEventListener('click', function(e) {
+            enableAudio();
+            if (!videoStarted) { videoStarted = true; splashVideo.play().catch(() => {}); }
+            if (splashVideo.paused) splashVideo.play().catch(() => {});
+        });
+        
+        function tryPlayVideo() {
+            if (videoStarted) return;
+            videoStarted = true;
+            splashVideo.play().catch(() => {});
+        }
+        tryPlayVideo();
+        setTimeout(() => { if (!videoStarted) tryPlayVideo(); }, 2000);
+        
+        splashVideo.addEventListener('ended', function() {
+            if (!videoEnded) { videoEnded = true; showScreen('menuScreen'); }
+        });
+        splashVideo.addEventListener('loadeddata', function() {
+            if (!videoStarted) tryPlayVideo();
+        });
+        setTimeout(() => {
+            if (splashScreen.classList.contains('active') && !videoEnded) {
+                if (splashVideo.paused) {
+                    splashVideo.play().catch(() => {
+                        if (!videoEnded) { videoEnded = true; showScreen('menuScreen'); }
+                    });
+                }
+            }
+        }, 5000);
+        
+        function showScreen(screenId) {
+            [splashScreen, menuScreen, settingsScreen, achievementScreen, charSelect, gameScreen].forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            if (screenId === 'menuScreen') {
+                stopCharMusic();
+                stopRandomAnimation();
+                if (audioEnabled && bgMusic && bgMusic.paused) {
+                    bgMusic.play().then(() => {
+                        let vol = bgMusic.volume;
+                        if (vol < 0.35) {
+                            const fadeInterval = setInterval(() => {
+                                vol += 0.05;
+                                if (vol >= 0.35) { vol = 0.35; clearInterval(fadeInterval); }
+                                bgMusic.volume = vol;
+                            }, 100);
+                        }
+                    }).catch(() => {});
+                }
+            }
+            if (screenId === 'achievementScreen') {
+                updateAchievements();
+            }
+        }
+        
+        playBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            showScreen('characterSelect');
+            if (!audioEnabled) enableAudio();
+            if (bgMusic) { bgMusic.pause(); bgMusic.currentTime = 0; bgMusic.volume = 0; }
+        });
+        settingsBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            showScreen('settingsScreen');
+            if (!audioEnabled) enableAudio();
+        });
+        achievementBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            showScreen('achievementScreen');
+            if (!audioEnabled) enableAudio();
+        });
+        backBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            showScreen('menuScreen');
+        });
+        achBackBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            showScreen('menuScreen');
+        });
+        charBackBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            showScreen('menuScreen');
+        });
+        
+        document.querySelectorAll('.char-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const charKey = this.dataset.char;
+                currentChar = charKey;
+                const charData = characters[charKey];
+                if (!charData) return;
+                gameScreen.style.background = 'url(' + charData.bg + ') center/cover no-repeat';
+                gameScreen.style.backgroundColor = '#0e0b1a';
+                startCharMusic(charKey);
+                showScreen('gameScreen');
+                startGame(charKey);
+            });
+        });
+        
+        function startGame(charKey) {
+            currentDialogIndex = 0;
+            isFading = false;
+            fadeOverlay.classList.remove('active');
+            const charData = characters[charKey];
+            if (charData) {
+                startRandomAnimation(charData.animations);
+                if (charKey === 'bezmuna' && !achievements.bezmuna) {
+                    achievements.bezmuna = true;
+                    showAchievement('znachok.png', 'Поговорить с Безумной Митой');
+                }
+                if (charKey === 'kepochka' && !achievements.kepochka) {
+                    achievements.kepochka = true;
+                    showAchievement('znachok1.png', 'Поговорить с Кепочкой');
+                }
+                if (charKey === 'kind' && !achievements.kind) {
+                    achievements.kind = true;
+                    showAchievement('znachok2.png', 'Поговорить с Доброй Митой');
+                }
+                showDialog(currentDialogIndex, charKey);
+            }
+        }
+        
+        function showDialog(index, charKey) {
+            const charData = characters[charKey];
+            if (!charData) return;
+            if (index >= charData.dialogs.length) {
+                fadeOverlay.classList.add('active');
+                isFading = true;
+                stopCharMusic();
+                stopRandomAnimation();
+                setTimeout(() => {
+                    fadeOverlay.classList.remove('active');
+                    isFading = false;
+                    showScreen('menuScreen');
+                }, 2500);
+                return;
+            }
+            const dialog = charData.dialogs[index];
+            dialogSpeaker.textContent = dialog.speaker;
+            dialogSpeaker.className = 'dialog-speaker' + (dialog.speakerClass ? ' ' + dialog.speakerClass : '');
+            dialogText.textContent = dialog.text;
+            if (dialog.animation) {
+                mitaImage.src = dialog.animation;
+                mitaImage.style.opacity = '0';
+                setTimeout(() => { mitaImage.style.opacity = '1'; }, 50);
+            }
+            if (dialog.audio) {
+                if (dialogAudio) { dialogAudio.pause(); dialogAudio.currentTime = 0; }
+                dialogAudio = new Audio(dialog.audio);
+                dialogAudio.volume = 0.7;
+                dialogAudio.play().catch(() => {});
+            }
+            currentDialogIndex = index;
+        }
+        
+        function nextDialog() {
+            if (isFading) return;
+            if (dialogAudio && !dialogAudio.paused) { dialogAudio.pause(); dialogAudio.currentTime = 0; }
+            showDialog(currentDialogIndex + 1, currentChar);
+        }
+        
+        dialogContinue.addEventListener('click', function(e) { e.stopPropagation(); nextDialog(); });
+        dialogBox.addEventListener('click', function(e) {
+            if (e.target === this || e.target.closest('.dialog-text') || e.target.closest('.dialog-speaker')) nextDialog();
+        });
+        
+        console.log('MiSide: Error — релизная версия');
+    })();
+</script>
+</body>
+</html>
