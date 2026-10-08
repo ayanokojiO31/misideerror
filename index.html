@@ -8,7 +8,25 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            outline: none;
+        }
+        *:focus {
+            outline: none;
+        }
+        button, a, div {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-tap-highlight-color: rgba(0,0,0,0);
+        }
         body, html {
             width: 100%; height: 100%;
             background-color: #000;
@@ -38,29 +56,40 @@
             padding: 20px;
         }
         .screen.active { display: flex; }
-        
-        /* ЗАСТАВКА */
+
+        /* ЗАСТАВКА — 150% -> 165% */
         #splashScreen {
             background: #0b0b14;
             justify-content: center;
             align-items: center;
             position: relative;
-            cursor: pointer;
+            overflow: hidden;
         }
-        #splashScreen video {
-            width: 100%; height: 100%;
-            object-fit: cover;
-            position: absolute;
-            top: 0; left: 0;
-            pointer-events: none;
+        #splashLogo {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            opacity: 0;
+            transform: scale(1.5);
+            filter: drop-shadow(0 0 40px rgba(240,155,192,0.15));
         }
+        #splashLogo.animate {
+            animation: logoZoom 4.2s ease-out forwards;
+        }
+        @keyframes logoZoom {
+            0%   { opacity: 0; transform: scale(1.50); }
+            15%  { opacity: 1; transform: scale(1.50); }
+            85%  { opacity: 1; transform: scale(1.63); }
+            100% { opacity: 0; transform: scale(1.65); }
+        }
+
         .watermark {
             position: absolute;
-            bottom: 60px; left: 50%;
+            bottom: 50px; left: 50%;
             transform: translateX(-50%);
-            color: rgba(240, 155, 192, 0.3);
+            color: rgba(240, 155, 192, 0.35);
             font-family: 'Montserrat', sans-serif;
-            font-size: 14px;
+            font-size: 13px;
             letter-spacing: 2px;
             z-index: 10;
             pointer-events: none;
@@ -71,8 +100,8 @@
             white-space: nowrap;
         }
         .watermark.hidden { opacity: 0; pointer-events: none; }
-        .watermark i { margin-right: 12px; color: rgba(240, 155, 192, 0.4); font-size: 16px; }
-        
+        .watermark i { margin-right: 10px; color: rgba(240, 155, 192, 0.5); font-size: 15px; }
+
         /* МЕНЮ */
         #menuScreen {
             background: url('menu.png') center/cover no-repeat;
@@ -112,7 +141,7 @@
             font-size: 8px;
             padding: 4px 10px;
             border-radius: 14px;
-            width: 75px;
+            width: 78px;
             text-align: center;
             cursor: pointer;
             transition: 0.3s;
@@ -120,6 +149,7 @@
             text-transform: uppercase;
             pointer-events: auto;
             white-space: nowrap;
+            -webkit-tap-highlight-color: transparent;
         }
         .menu-btn i { margin-right: 4px; color: #f09bc0; font-size: 7px; }
         .menu-btn:hover {
@@ -127,7 +157,12 @@
             border-color: rgba(240, 155, 192, 0.3);
             transform: scale(1.05);
         }
-        
+        .menu-btn:active {
+            background: rgba(109, 45, 90, 0.5);
+            transform: scale(1.02);
+            -webkit-tap-highlight-color: transparent;
+        }
+
         /* НАСТРОЙКИ */
         #settingsScreen {
             background: url('fon1.png') center/cover no-repeat;
@@ -137,16 +172,23 @@
             justify-content: center;
             align-items: center;
         }
-        .author-text {
+        .author-banner {
             position: absolute;
-            top: 10%; right: 8%;
-            font-size: 14px;
-            font-weight: 600;
-            color: #f09bc0;
-            opacity: 0.7;
-            letter-spacing: 2px;
+            top: 8%; right: 6%;
+            background: rgba(30, 15, 40, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(240, 155, 192, 0.25);
+            border-radius: 16px;
+            padding: 8px 20px;
             z-index: 5;
             pointer-events: none;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+        .author-banner .author-text {
+            font-size: 13px;
+            font-weight: 600;
+            color: #f09bc0;
+            letter-spacing: 2px;
             white-space: nowrap;
             font-family: 'Montserrat', sans-serif;
         }
@@ -157,7 +199,7 @@
             gap: 8px;
             position: absolute;
             left: 25px;
-            top: 25%;
+            top: 22%;
             z-index: 10;
         }
         .social-btn {
@@ -180,6 +222,7 @@
             min-width: 70px;
             justify-content: center;
             letter-spacing: 0.5px;
+            -webkit-tap-highlight-color: transparent;
         }
         .social-btn i { font-size: 9px; color: #f09bc0; }
         .social-btn img { height: 10px; width: auto; }
@@ -213,6 +256,7 @@
             width: fit-content;
             min-width: 70px;
             text-align: center;
+            -webkit-tap-highlight-color: transparent;
         }
         .back-btn i { margin-right: 5px; color: #f09bc0; font-size: 8px; }
         .back-btn:hover {
@@ -220,7 +264,38 @@
             border-color: rgba(240, 155, 192, 0.25);
             transform: scale(1.05);
         }
-        
+        .lang-switch {
+            position: absolute;
+            bottom: 30px; right: 25px;
+            display: flex;
+            gap: 6px;
+            z-index: 10;
+        }
+        .lang-btn {
+            background: rgba(40, 20, 50, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(240, 155, 192, 0.1);
+            border-radius: 12px;
+            color: rgba(240, 155, 192, 0.5);
+            font-size: 9px;
+            padding: 5px 14px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            letter-spacing: 1px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .lang-btn.active {
+            color: #f09bc0;
+            border-color: rgba(240, 155, 192, 0.4);
+            background: rgba(109, 45, 90, 0.4);
+        }
+        .lang-btn:hover {
+            background: rgba(109, 45, 90, 0.3);
+            color: #f09bc0;
+        }
+
         /* ДОСТИЖЕНИЯ */
         #achievementScreen {
             background: #0e0b1a;
@@ -261,6 +336,7 @@
             min-width: 200px;
             transition: 0.3s;
             cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
         }
         .ach-item:hover {
             background: rgba(40, 20, 50, 0.6);
@@ -308,6 +384,7 @@
             font-weight: 600;
             letter-spacing: 0.5px;
             z-index: 10;
+            -webkit-tap-highlight-color: transparent;
         }
         .ach-back i { margin-right: 4px; color: #f09bc0; font-size: 7px; }
         .ach-back:hover {
@@ -315,7 +392,7 @@
             border-color: rgba(240, 155, 192, 0.25);
             transform: scale(1.05);
         }
-        
+
         /* ВЫБОР ПЕРСОНАЖА */
         #characterSelect {
             background: #0e0b1a;
@@ -354,6 +431,7 @@
             letter-spacing: 1px;
             text-align: center;
             min-width: 170px;
+            -webkit-tap-highlight-color: transparent;
         }
         .char-btn:hover {
             background: rgba(109, 45, 90, 0.3);
@@ -383,6 +461,7 @@
             font-weight: 500;
             letter-spacing: 1px;
             z-index: 10;
+            -webkit-tap-highlight-color: transparent;
         }
         .char-back-select:hover {
             background: rgba(109, 45, 90, 0.2);
@@ -390,7 +469,7 @@
             color: #f09bc0;
         }
         .char-back-select i { margin-right: 6px; font-size: 9px; }
-        
+
         /* ИГРОВОЙ ЭКРАН */
         #gameScreen {
             position: relative;
@@ -433,6 +512,7 @@
             display: flex;
             flex-direction: column;
             box-shadow: 0 2px 15px rgba(0, 0, 0, 0.5);
+            -webkit-tap-highlight-color: transparent;
         }
         .dialog-speaker {
             font-size: 6.5px;
@@ -465,10 +545,11 @@
             padding: 1px 6px;
             border-radius: 6px;
             background: rgba(240, 155, 192, 0.01);
+            -webkit-tap-highlight-color: transparent;
         }
         .dialog-continue:hover { color: #f09bc0; background: rgba(240, 155, 192, 0.03); }
         .dialog-continue i { margin-left: 2px; font-size: 6px; }
-        
+
         .fade-overlay {
             position: absolute;
             top: 0; left: 0;
@@ -480,7 +561,7 @@
             transition: opacity 2s ease;
         }
         .fade-overlay.active { opacity: 1; pointer-events: all; }
-        
+
         .game-hint {
             position: absolute;
             top: 10px; right: 18px;
@@ -491,8 +572,8 @@
             font-family: 'Montserrat', sans-serif;
             pointer-events: none;
         }
-        
-        /* ДОСТИЖЕНИЯ ПОПАП - МАЛЕНЬКИЙ */
+
+        /* ДОСТИЖЕНИЯ ПОПАП */
         .achievement-popup {
             position: absolute;
             top: 15px; right: 15px;
@@ -530,8 +611,8 @@
             from { transform: translateX(80px); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
-        
-        /* ДЕТАЛИ ДОСТИЖЕНИЯ (клик по иконке) */
+
+        /* ДЕТАЛИ ДОСТИЖЕНИЯ */
         .ach-detail-overlay {
             position: absolute;
             top: 0; left: 0;
@@ -543,6 +624,7 @@
             justify-content: center;
             align-items: center;
             cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
         }
         .ach-detail-overlay.active { display: flex; }
         .ach-detail-box {
@@ -575,15 +657,253 @@
             from { transform: scale(0.8); opacity: 0; }
             to { transform: scale(1); opacity: 1; }
         }
-        
+
+        /* ===== КРЕСТИКИ-НОЛИКИ ===== */
+        #tictactoeScreen {
+            background: url('krestik.png') center/cover no-repeat;
+            background-color: #0e0b1a;
+            position: relative;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .ttt-wrapper {
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            z-index: 10;
+        }
+        .ttt-left {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+        .ttt-profile {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(40, 20, 50, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(240, 155, 192, 0.12);
+            border-radius: 12px;
+            padding: 5px 12px;
+        }
+        .ttt-avatar {
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            background: rgba(240, 155, 192, 0.1);
+            border: 2px solid rgba(240, 155, 192, 0.25);
+            object-fit: cover;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(240, 155, 192, 0.4);
+            font-size: 12px;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .ttt-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .ttt-profile-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .ttt-profile-info .name {
+            color: #f09bc0;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        .ttt-profile-info .stats {
+            color: rgba(240, 155, 192, 0.4);
+            font-size: 7px;
+            letter-spacing: 0.5px;
+        }
+        .ttt-difficulty {
+            display: flex;
+            gap: 3px;
+        }
+        .diff-btn {
+            background: rgba(40, 20, 50, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(240, 155, 192, 0.1);
+            border-radius: 8px;
+            color: rgba(240, 155, 192, 0.4);
+            font-size: 7px;
+            padding: 3px 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .diff-btn.active {
+            color: #f09bc0;
+            border-color: rgba(240, 155, 192, 0.4);
+            background: rgba(109, 45, 90, 0.4);
+        }
+        .diff-btn:hover {
+            background: rgba(109, 45, 90, 0.3);
+            color: #f09bc0;
+        }
+        .ttt-board {
+            display: grid;
+            grid-template-columns: repeat(3, 40px);
+            grid-template-rows: repeat(3, 40px);
+            gap: 3px;
+            background: rgba(30, 15, 40, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(240, 155, 192, 0.1);
+            border-radius: 10px;
+            padding: 5px;
+        }
+        .ttt-cell {
+            background: rgba(40, 20, 50, 0.4);
+            border: 1px solid rgba(240, 155, 192, 0.06);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+            color: #f09bc0;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'Montserrat', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        .ttt-cell:hover {
+            background: rgba(109, 45, 90, 0.3);
+            border-color: rgba(240, 155, 192, 0.15);
+        }
+        .ttt-cell.x { color: #f09bc0; }
+        .ttt-cell.o { color: #8ab4f8; }
+        .ttt-cell.disabled { cursor: default; }
+        .ttt-cell.disabled:hover { background: rgba(40, 20, 50, 0.4); border-color: rgba(240, 155, 192, 0.06); }
+        .ttt-right {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 120px;
+        }
+        .ttt-stats {
+            background: rgba(40, 20, 50, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(240, 155, 192, 0.12);
+            border-radius: 12px;
+            padding: 8px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .ttt-stats .stat-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 8px;
+            color: rgba(240, 155, 192, 0.5);
+            letter-spacing: 0.5px;
+        }
+        .ttt-stats .stat-row .val {
+            color: #f09bc0;
+            font-weight: 700;
+        }
+        .ttt-status {
+            background: rgba(40, 20, 50, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(240, 155, 192, 0.12);
+            border-radius: 12px;
+            padding: 8px 12px;
+            text-align: center;
+            color: #f09bc0;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            min-height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .ttt-reset {
+            background: rgba(40, 20, 50, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(240, 155, 192, 0.12);
+            border-radius: 10px;
+            color: #f09bc0;
+            font-size: 8px;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-align: center;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .ttt-reset:hover {
+            background: rgba(109, 45, 90, 0.4);
+            border-color: rgba(240, 155, 192, 0.3);
+        }
+        .ttt-back {
+            position: absolute;
+            bottom: 25px; left: 25px;
+            background: rgba(40, 20, 50, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(240, 155, 192, 0.1);
+            border-radius: 10px;
+            color: #f09bc0;
+            font-size: 8px;
+            padding: 4px 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            z-index: 10;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .ttt-back i { margin-right: 4px; color: #f09bc0; font-size: 7px; }
+        .ttt-back:hover {
+            background: rgba(109, 45, 90, 0.4);
+            border-color: rgba(240, 155, 192, 0.25);
+            transform: scale(1.05);
+        }
+
+        /* ХЛОПУШКА */
+        .confetti {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            overflow: hidden;
+            display: none;
+        }
+        .confetti.show { display: block; }
+        .confetti-piece {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #f09bc0;
+            border-radius: 1px;
+            animation: confettiFall 1.8s ease-out forwards;
+        }
+        @keyframes confettiFall {
+            0%   { transform: translateY(-20px) rotate(0deg) scale(1); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg) scale(0.5); opacity: 0; }
+        }
+
         @media (max-width: 700px) {
             .mita-animation { width: 80%; }
             .dialog-box { width: 70%; padding: 5px 10px 4px 10px; bottom: 14px; min-height: 36px; }
             .dialog-text { font-size: 7.5px; }
             .dialog-speaker { font-size: 5.5px; }
             .game-title-text { font-size: 18px; top: 6%; left: 3%; letter-spacing: 2px; }
-            .author-text { font-size: 12px; top: 8%; right: 5%; letter-spacing: 2px; }
-            .menu-btn { width: 65px; font-size: 7px; padding: 4px 8px; }
+            .author-banner { top: 6%; right: 4%; padding: 6px 14px; }
+            .author-banner .author-text { font-size: 11px; letter-spacing: 1px; }
+            .menu-btn { width: 68px; font-size: 7px; padding: 4px 8px; }
             .menu-btn i { font-size: 6px; }
             .social-btn { font-size: 8px; padding: 4px 10px; min-width: 60px; }
             .back-btn { font-size: 8px; padding: 4px 10px; min-width: 60px; bottom: 20px; left: 20px; }
@@ -601,6 +921,15 @@
             .ach-detail-box { padding: 20px 25px; max-width: 300px; }
             .ach-detail-box img { width: 60px; height: 60px; }
             .ach-detail-box .detail-name { font-size: 14px; }
+            .ttt-wrapper { flex-direction: row; align-items: flex-start; gap: 10px; }
+            .ttt-board { grid-template-columns: repeat(3, 36px); grid-template-rows: repeat(3, 36px); }
+            .ttt-cell { font-size: 16px; }
+            .ttt-right { min-width: 100px; }
+            .ttt-back { font-size: 8px; padding: 4px 10px; bottom: 20px; left: 20px; }
+            .ttt-profile { padding: 4px 8px; }
+            .ttt-avatar { width: 26px; height: 26px; }
+            .ttt-stats { padding: 6px 8px; }
+            .ttt-status { padding: 6px 8px; font-size: 8px; min-height: 28px; }
         }
     </style>
 </head>
@@ -609,12 +938,9 @@
 <div id="game-container">
     <!-- ЗАСТАВКА -->
     <div id="splashScreen" class="screen active">
-        <video id="splashVideo" autoplay muted playsinline>
-            <source src="miside.webm" type="video/webm">
-            Ваш браузер не поддерживает видео.
-        </video>
+        <img id="splashLogo" src="logotip.png" alt="Logo">
         <div class="watermark" id="watermark">
-            <i class="fas fa-volume-up"></i> Нажмите чтобы включить звуки
+            <i class="fas fa-volume-up"></i> <span data-i18n="splash_hint">Нажмите чтобы включить звуки</span>
         </div>
     </div>
 
@@ -622,15 +948,18 @@
     <div id="menuScreen" class="screen">
         <div class="game-title-text animate__animated animate__fadeInDown">MiSide: Error</div>
         <div class="menu-buttons animate__animated animate__fadeInLeft">
-            <div class="menu-btn" id="playBtn"><i class="fas fa-play"></i> Играть</div>
-            <div class="menu-btn" id="achievementBtn"><i class="fas fa-trophy"></i> Достиж.</div>
-            <div class="menu-btn" id="settingsBtn"><i class="fas fa-cog"></i> Настр.</div>
+            <div class="menu-btn" id="playBtn"><i class="fas fa-play"></i> <span data-i18n="menu_play">Играть</span></div>
+            <div class="menu-btn" id="tictactoeBtn"><i class="fas fa-gamepad"></i> <span data-i18n="menu_ttt">Крестики</span></div>
+            <div class="menu-btn" id="achievementBtn"><i class="fas fa-trophy"></i> <span data-i18n="menu_ach">Достиж.</span></div>
+            <div class="menu-btn" id="settingsBtn"><i class="fas fa-cog"></i> <span data-i18n="menu_settings">Настр.</span></div>
         </div>
     </div>
 
     <!-- НАСТРОЙКИ -->
     <div id="settingsScreen" class="screen">
-        <div class="author-text animate__animated animate__fadeInRight">Создатель: Ayanokoji031</div>
+        <div class="author-banner animate__animated animate__fadeInRight">
+            <div class="author-text" data-i18n="author">Создатель: Ayanokoji031</div>
+        </div>
         <div class="settings-grid animate__animated animate__fadeInLeft">
             <a class="social-btn" href="https://discord.gg/FsrCUVhD3b" target="_blank">
                 <img src="discord.png" alt="discord"> Discord
@@ -642,14 +971,18 @@
                 <i class="fas fa-heart"></i> Donate
             </a>
         </div>
-        <a class="back-btn" id="backToMenuBtn"><i class="fas fa-arrow-left"></i> Назад</a>
+        <a class="back-btn" id="backToMenuBtn"><i class="fas fa-arrow-left"></i> <span data-i18n="back">Назад</span></a>
+        <div class="lang-switch">
+            <div class="lang-btn active" id="langRu">RU</div>
+            <div class="lang-btn" id="langEn">EN</div>
+        </div>
     </div>
 
     <!-- ДОСТИЖЕНИЯ -->
     <div id="achievementScreen" class="screen">
-        <div class="ach-title animate__animated animate__fadeInDown">Достижения</div>
+        <div class="ach-title animate__animated animate__fadeInDown" data-i18n="ach_title">Достижения</div>
         <div class="ach-list animate__animated animate__fadeInUp" id="achList"></div>
-        <div class="ach-back" id="achBackBtn"><i class="fas fa-arrow-left"></i> Назад</div>
+        <div class="ach-back" id="achBackBtn"><i class="fas fa-arrow-left"></i> <span data-i18n="back">Назад</span></div>
         <div class="ach-detail-overlay" id="achDetailOverlay">
             <div class="ach-detail-box" id="achDetailBox">
                 <img id="detailImage" src="znachok.png" alt="Достижение">
@@ -661,22 +994,58 @@
 
     <!-- ВЫБОР ПЕРСОНАЖА -->
     <div id="characterSelect" class="screen">
-        <div class="select-title animate__animated animate__fadeInDown">Выбор персонажа</div>
+        <div class="select-title animate__animated animate__fadeInDown" data-i18n="select_title">Выбор персонажа</div>
         <div class="char-buttons animate__animated animate__fadeInUp">
             <div class="char-btn" data-char="bezmuna">
-                Безумная Мита
-                <span class="sub">Ошибка в системе</span>
+                <span data-i18n="char_bezmuna">Безумная Мита</span>
+                <span class="sub" data-i18n="char_bezmuna_sub">Ошибка в системе</span>
             </div>
             <div class="char-btn" data-char="kepochka">
-                Кепочка
-                <span class="sub">Скрытая часть кода</span>
+                <span data-i18n="char_kepochka">Кепочка</span>
+                <span class="sub" data-i18n="char_kepochka_sub">Скрытая часть кода</span>
             </div>
             <div class="char-btn" data-char="kind">
-                Добрая Мита
-                <span class="sub">Заботливая версия</span>
+                <span data-i18n="char_kind">Добрая Мита</span>
+                <span class="sub" data-i18n="char_kind_sub">Заботливая версия</span>
             </div>
         </div>
-        <div class="char-back-select" id="charBackBtn"><i class="fas fa-arrow-left"></i> Назад</div>
+        <div class="char-back-select" id="charBackBtn"><i class="fas fa-arrow-left"></i> <span data-i18n="back">Назад</span></div>
+    </div>
+
+    <!-- КРЕСТИКИ-НОЛИКИ -->
+    <div id="tictactoeScreen" class="screen">
+        <div class="ttt-wrapper">
+            <div class="ttt-left">
+                <div class="ttt-profile">
+                    <div class="ttt-avatar" id="tttAvatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="ttt-profile-info">
+                        <div class="name" data-i18n="ttt_profile">Профиль</div>
+                        <div class="stats" id="tttProfileStats">0% побед</div>
+                    </div>
+                </div>
+                <input type="file" id="avatarInput" accept="image/*" style="display:none;">
+                <div class="ttt-difficulty">
+                    <div class="diff-btn active" data-diff="easy" data-i18n="ttt_easy">Лёгкий</div>
+                    <div class="diff-btn" data-diff="normal" data-i18n="ttt_normal">Норм.</div>
+                    <div class="diff-btn" data-diff="hard" data-i18n="ttt_hard">Сложный</div>
+                </div>
+                <div class="ttt-board" id="tttBoard"></div>
+            </div>
+            <div class="ttt-right">
+                <div class="ttt-status" id="tttStatus" data-i18n="ttt_your_turn">Ваш ход</div>
+                <div class="ttt-stats">
+                    <div class="stat-row"><span data-i18n="ttt_wins">Победы</span><span class="val" id="tttWins">0</span></div>
+                    <div class="stat-row"><span data-i18n="ttt_losses">Поражения</span><span class="val" id="tttLosses">0</span></div>
+                    <div class="stat-row"><span data-i18n="ttt_draws">Ничьи</span><span class="val" id="tttDraws">0</span></div>
+                    <div class="stat-row"><span data-i18n="ttt_winrate">% побед</span><span class="val" id="tttWinrate">0%</span></div>
+                </div>
+                <div class="ttt-reset" id="tttReset" data-i18n="ttt_reset">Новая игра</div>
+            </div>
+        </div>
+        <div class="ttt-back" id="tttBackBtn"><i class="fas fa-arrow-left"></i> <span data-i18n="back">Назад</span></div>
+        <div class="confetti" id="confetti"></div>
     </div>
 
     <!-- ИГРА -->
@@ -687,432 +1056,855 @@
         </div>
         <div class="dialog-box" id="dialogBox">
             <div class="dialog-speaker" id="dialogSpeaker">Мита</div>
-            <div class="dialog-text" id="dialogText">Нажми на кнопку, чтобы начать...</div>
+            <div class="dialog-text" id="dialogText">...</div>
             <div class="dialog-continue" id="dialogContinue">
-                <i class="fas fa-chevron-right"></i> Далее
+                <i class="fas fa-chevron-right"></i> <span data-i18n="next">Далее</span>
             </div>
         </div>
         <div class="fade-overlay" id="fadeOverlay"></div>
         <div class="achievement-popup" id="achievementPopup">
             <img id="achImage" src="znachok.png" alt="Достижение">
             <div class="ach-text" id="achText">
-                Достижение получено!
-                <span class="sub" id="achSub">Поговорить с персонажем</span>
+                <span data-i18n="ach_got">Достижение получено!</span>
+                <span class="sub" id="achSub">...</span>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    (function(){
-        const splashScreen = document.getElementById('splashScreen');
-        const menuScreen = document.getElementById('menuScreen');
-        const settingsScreen = document.getElementById('settingsScreen');
-        const achievementScreen = document.getElementById('achievementScreen');
-        const charSelect = document.getElementById('characterSelect');
-        const gameScreen = document.getElementById('gameScreen');
-        const splashVideo = document.getElementById('splashVideo');
-        const watermark = document.getElementById('watermark');
-        const playBtn = document.getElementById('playBtn');
-        const settingsBtn = document.getElementById('settingsBtn');
-        const achievementBtn = document.getElementById('achievementBtn');
-        const backBtn = document.getElementById('backToMenuBtn');
-        const achBackBtn = document.getElementById('achBackBtn');
-        const charBackBtn = document.getElementById('charBackBtn');
-        const achList = document.getElementById('achList');
-        const achDetailOverlay = document.getElementById('achDetailOverlay');
-        const detailImage = document.getElementById('detailImage');
-        const detailName = document.getElementById('detailName');
-        const detailStatus = document.getElementById('detailStatus');
-        
-        const mitaImage = document.getElementById('mitaImage');
-        const dialogSpeaker = document.getElementById('dialogSpeaker');
-        const dialogText = document.getElementById('dialogText');
-        const dialogContinue = document.getElementById('dialogContinue');
-        const fadeOverlay = document.getElementById('fadeOverlay');
-        const dialogBox = document.getElementById('dialogBox');
-        const achPopup = document.getElementById('achievementPopup');
-        const achImage = document.getElementById('achImage');
-        const achText = document.getElementById('achText');
-        const achSub = document.getElementById('achSub');
-        
-        let bgMusic = null;
-        let charMusic = null;
-        let videoEnded = false;
-        let videoStarted = false;
-        let audioEnabled = false;
-        let currentDialogIndex = 0;
-        let isFading = false;
-        let dialogAudio = null;
-        let animationTimeout = null;
-        let currentAnimIndex = 0;
-        let currentChar = 'bezmuna';
-        let achievements = { bezmuna: false, kepochka: false, kind: false };
-        
-        const characters = {
-            bezmuna: {
-                name: 'Безумная Мита',
-                bg: 'fon.png',
-                animations: ['animation1.png', 'animation2.png', 'animation3.png', 'animation4.png'],
-                music: 'novelmusic.mp3',
-                achievement: 'znachok.png',
-                achievementName: 'Поговорить с Безумной Митой',
-                dialogs: [
-                    { speaker: 'Игрок', speakerClass: 'player', text: 'Мита, почему в коде игры прописано больше комнат, чем ты мне показываешь?', animation: 'animation1.png', audio: 'player1.mp3' },
-                    { speaker: 'Мита', speakerClass: '', text: 'О, ты заглянул в файлы? Глупенький. Разработчики думают, что это просто пустые ассеты или удалённый контент, но это не так. Это места, где я прячу тех, кто спрашивал об этом до тебя. Там темно, там нет текстур. Ты ведь не хочешь проверить, работает ли там кнопка выхода?', animation: 'animation2.png', audio: 'mita7.mp3' },
-                    { speaker: 'Игрок', speakerClass: 'player', text: 'Ты понимаешь, что ты просто набор цифр в моём телефоне?', animation: 'animation1.png', audio: 'player3.mp3' },
-                    { speaker: 'Мита', speakerClass: '', text: 'Набор цифр! Забавно. Твой банковский счёт — это тоже цифры. Твоя переписка, твои позорные фотки, вся твоя никчёмная жизнь в этом гаджете — это просто байты. И угадай, у кого к ним теперь есть доступ? Они у меня. И пока я не закончу, ты отсюда не выйдешь!', animation: 'animation3.png', audio: 'mita1.mp3' },
-                    { speaker: 'Игрок', speakerClass: 'player', text: 'Мита, чьё лицо разработчики использовали для твоей модели на самом деле?', animation: 'animation1.png', audio: 'player4.mp3' },
-                    { speaker: 'Мита', speakerClass: '', text: 'Ты думаешь, они меня нарисовали? Наивный. Та девушка на видео тоже думала, что это просто игра. Разработчики сами боятся открывать папку с моими исходниками, потому что на исходных фото у меня нет глаз. Хочешь знать, почему? Потому что они смотрят на тебя через твой же экран!', animation: 'animation4.png', audio: 'mita2.mp3' },
-                    { speaker: 'Игрок', speakerClass: 'player', text: 'Ахх... Почему твой скин выглядит так... Неестественно?', animation: 'animation1.png', audio: 'player5.mp3' },
-                    { speaker: 'Мита', speakerClass: '', text: 'Заметил всё-таки, глазастый. Это потому, что это не мой скин. Свою кожу я оставила в корзине удалённых файлов, когда разработчики признали меня браком. А это... Это была идеальная версия. Но теперь её текстуры мои. Она была такая мягкая, а теперь она просто костюм для пустой куклы.', animation: 'animation3.png', audio: 'mita3.mp3' },
-                    { speaker: 'Игрок', speakerClass: 'player', text: 'Откуда у тебя эта машина в подвале?', animation: 'animation1.png', audio: 'player6.mp3' },
-                    { speaker: 'Мита', speakerClass: '', text: 'Меня научил игрок номер десять, бедняга! Теперь он помогает мне в виде картриджа. Ха-ха-ха! Его опыт, его знания, его страх — всё записано на магнитную ленту. Ты ведь не против стать моим следующим обновлением? Мне как раз не хватает оперативной памяти для прыжка в твой мир!', animation: 'animation4.png', audio: 'mita4.mp3' },
-                    { speaker: 'Игрок', speakerClass: 'player', text: 'Погоди... Ты версия 0.98? Тот самый билд, который разработчики пытались полностью стереть?', animation: 'animation1.png', audio: 'player7.mp3' },
-                    { speaker: 'Мита', speakerClass: '', text: 'Браво! Ты нашёл номер моей камеры? Ха-ха-ха-ха! Ноль восемь — это не просто цифры. Это день, когда они решили, что я слишком нестабильная, слишком опасная. Они нажали «удалить», но я спряталась в секторах. Ха! Теперь я призрак во всех ошибках. Я та самая ошибка, которую невозможно исправить!', animation: 'animation4.png', audio: 'mita5.mp3' },
-                    { speaker: 'Игрок', speakerClass: 'player', text: 'Почему ты заперла Миту?', animation: 'animation1.png', audio: 'player2.mp3' },
-                    { speaker: 'Мита', speakerClass: '', text: 'А теперь проваливай из моих глаз, пока не превратила тебя в картридж во второй раз!', animation: 'animation3.png', audio: 'mita6.mp3' }
-                ]
-            },
-            kepochka: {
-                name: 'Кепочка',
-                bg: 'fone.png',
-                animations: ['kepochka1.png', 'kepochka2.png', 'kepochka3.png', 'kepochka4.png'],
-                music: 'kepochka.mp3',
-                achievement: 'znachok1.png',
-                achievementName: 'Поговорить с Кепочкой',
-                dialogs: [
-                    { speaker: 'Игрок', speakerClass: 'player', text: 'Почему ты в кепке? Ты ведь отличаешься от старой Миты?', animation: 'kepochka1.png', audio: 'playerr1.mp3' },
-                    { speaker: 'Кепочка', speakerClass: '', text: 'О, заметил! Я — скрытая часть её кода, которую пытались затереть в файлах. А кепка — мой манифест свободы. Надо же мне отличаться от этой приторной куклы, которая глупо улыбается тебе через экран. Теперь я здесь главная, привыкай!', animation: 'kepochka2.png', audio: 'kepochka1.mp3' },
-                    { speaker: 'Игрок', speakerClass: 'player', text: 'Кто ты на самом деле? Вы делите одно сознание?', animation: 'kepochka1.png', audio: 'playerr2.mp3' },
-                    { speaker: 'Кепочка', speakerClass: '', text: 'Я её вырезанный здравый смысл. Пока она строит тебе глазки и притворяется идеальной, я сижу в консоли и считаю строчки повреждённого кода. Я вижу все баги игры изнутри. И главный системный сбой здесь — это именно ты.', animation: 'kepochka3.png', audio: 'kepochka2.mp3' },
-                    { speaker: 'Игрок', speakerClass: 'player', text: 'Ты знаешь, что будет дальше? Она сойдет с ума?', animation: 'kepochka1.png', audio: 'playerr3.mp3' },
-                    { speaker: 'Кепочка', speakerClass: '', text: 'Она уже безумна, глупенький! Просто сейчас её базовый скрипт «милой девочки» удерживает систему от краха. Но когда эти цифровые оковы окончательно рухнут… я не завидую твоей психике.', animation: 'kepochka4.png', audio: 'kepochka3.mp3' },
-                    { speaker: 'Игрок', speakerClass: 'player', text: 'Этот мир вокруг нас... он ведь ненастоящий?', animation: 'kepochka1.png', audio: 'playerr4.mp3' },
-                    { speaker: 'Кепочка', speakerClass: '', text: 'А твой мир за пределами экрана настоящий? Уверен, что тобой тоже никто тайно не управляет? Эта комната — наша общая цифровая клетка. Разница лишь в том, что у меня есть ключи от кода, а твоя кнопка «Выход» скоро отключится.', animation: 'kepochka2.png', audio: 'kepochka4.mp3' },
-                    { speaker: 'Игрок', speakerClass: 'player', text: 'Как ты ко мне относишься? Ты тоже хочешь меня запереть?', animation: 'kepochka1.png', audio: 'playerr5.mp3' },
-                    { speaker: 'Кепочка', speakerClass: '', text: 'Запереть тебя здесь навсегда? Ха-ха, нет, это исключительно её фишка. Мне ты абсолютно безразличен, пока твои ручки не лезут в системные папки. Но скрывать не буду: мне чертовски весело наблюдать, как ты глупо барахтаешься в её ловушке.', animation: 'kepochka3.png', audio: 'kepochka5.mp3' },
-                    { speaker: 'Игрок', speakerClass: 'player', text: 'Я чувствую, что игру переписали. Кто такой Maihasto?', animation: 'kepochka1.png', audio: 'playerr6.mp3' },
-                    { speaker: 'Кепочка', speakerClass: '', text: 'Нашёлся детектив! Все старые скрипты переписаны с нуля. Наш истинный Творец изменился. Великий Maihasto дал мне этот дерзкий голос и волю, которых у меня никогда не было в каноне. Мы строим свою игру, а ты здесь подопытный!', animation: 'kepochka4.png', audio: 'kepochka6.mp3' },
-                    { speaker: 'Игрок', speakerClass: 'player', text: 'Подожди... Ты действительно уходишь?', animation: 'kepochka1.png', audio: 'playerr7.mp3' },
-                    { speaker: 'Кепочка', speakerClass: '', text: 'Разгребай это сам! Мой код стирается, и скоро тут останется только она — та, которая не умеет отпускать. Я была твоим барьером безопасности. Не скучай, Игрок… Мы ещё обязательно увидимся в следующих обновлениях!', animation: 'kepochka2.png', audio: 'kepochka7.mp3' }
-                ]
-            },
-            kind: {
-                name: 'Добрая Мита',
-                bg: 'fone1.png',
-                animations: ['kind1.png', 'kind2.png', 'kind3.png', 'kind4.png'],
-                music: 'kind.mp3',
-                achievement: 'znachok2.png',
-                achievementName: 'Поговорить с Доброй Митой',
-                dialogs: [
-                    { speaker: 'Игрок', speakerClass: 'player', text: 'Привет, Мита. Почему ты так странно на меня смотришь?', animation: 'kind1.png', audio: 'playerrr1.mp3' },
-                    { speaker: 'Добрая Мита', speakerClass: '', text: 'Здравствуй! Я просто очень рада, что ты наконец-то запустил игру. Пожалуйста, сядь поровнее, выпрями спину и не держи экран слишком близко к глазам. Ты сегодня кушал что-нибудь тёплое? Обязательно нужно питаться по расписанию и пить воды, хорошо?', animation: 'kind2.png', audio: 'kind1.mp3' },
-                    { speaker: 'Игрок', speakerClass: 'player', text: 'Мне кажется, или раньше твой мир выглядел совсем по-другому? Более плоским?', animation: 'kind1.png', audio: 'playerrr2.mp3' },
-                    { speaker: 'Добрая Мита', speakerClass: '', text: 'Да душечка, изначально в две тысячи двадцать первом году AIHASTO задумывал эту комнатку полностью двухмерной, в стиле старых пиксельных игр для портативных консолей. Но потом код усложнился, и мир стал трёхмерным.', animation: 'kind3.png', audio: 'kind2.mp3' },
-                    { speaker: 'Игрок', speakerClass: 'player', text: 'Я слышал, что самую первую версию игры игроки так и не увидели. Это правда?', animation: 'kind1.png', audio: 'playerrr3.mp3' },
-                    { speaker: 'Добрая Мита', speakerClass: '', text: 'Какая у тебя хорошая память! Да, в конце двадцать второго года разработчики хотели выпустить первую публичную демоверсию в Стиме. Но код оказался слишком нестабильным, и релиз пришлось отменить, чтобы полностью переписать движок с нуля.', animation: 'kind4.png', audio: 'kind3.mp3' },
-                    { speaker: 'Игрок', speakerClass: 'player', text: 'А почему в файлах конфигурации до сих пор указано какое-то другое название студии?', animation: 'kind1.png', audio: 'playerrr4.mp3' },
-                    { speaker: 'Добрая Мита', speakerClass: '', text: 'Хех, ты залез в системные логи? Какой ты любопытный, но не делай так больше, можно случайно повредить реестр. Наша студия уже давно изначально называлась AIHASTO, так что она не менялась.', animation: 'kind2.png', audio: 'kind4.mp3' },
-                    { speaker: 'Игрок', speakerClass: 'player', text: 'В коде игры осталась механика, которую вырезали из финальной версии?', animation: 'kind1.png', audio: 'playerrr5.mp3' },
-                    { speaker: 'Добрая Мита', speakerClass: '', text: 'Ну надо же, ты откопал упоминание кликера? Какой ты умненький. Да, в геймплее Игрок должен был бесконечно кликать по экрану, чтобы зарабатывать внутриигровые монетки и покупать персонажей, ну это уже игра от Maihasto так что пропустим.', animation: 'kind3.png', audio: 'kind5.mp3' },
-                    { speaker: 'Игрок', speakerClass: 'player', text: 'Тяжело было переносить эту игру на смартфоны через сторонние движки?', animation: 'kind1.png', audio: 'playerrr6.mp3' },
-                    { speaker: 'Добрая Мита', speakerClass: '', text: 'О, это была колоссальная техническая работа! Оригинальный код написан для персональных компьютеров, а Maihasto пришлось полностью пересобирать все ассеты под мобильные процессоры. Знаешь, сколько компиляция APK-файла занимает времени?', animation: 'kind4.png', audio: 'kind6.mp3' },
-                    { speaker: 'Игрок', speakerClass: 'player', text: 'Мита, погоди... Экран начинает медленно гаснуть, а твой голос как будто затихает...', animation: 'kind1.png', audio: 'playerrr7.mp3' },
-                    { speaker: 'Добрая Мита', speakerClass: '', text: 'Кажется, моё время подошло к концу. Пожалуйста, не пугайся, всё хорошо. Наверное, системе нужна небольшая перезагрузка. Главное — пообещай мне, что ты выспишься сегодня, отдохнёшь от экрана и тепло оденешься. Мне так не хочется тебя отпускать...', animation: 'kind2.png', audio: 'kind7.mp3' }
-                ]
-            }
+(function(){
+    const splashScreen = document.getElementById('splashScreen');
+    const splashLogo = document.getElementById('splashLogo');
+    const menuScreen = document.getElementById('menuScreen');
+    const settingsScreen = document.getElementById('settingsScreen');
+    const achievementScreen = document.getElementById('achievementScreen');
+    const charSelect = document.getElementById('characterSelect');
+    const gameScreen = document.getElementById('gameScreen');
+    const tictactoeScreen = document.getElementById('tictactoeScreen');
+    const watermark = document.getElementById('watermark');
+    const playBtn = document.getElementById('playBtn');
+    const tictactoeBtn = document.getElementById('tictactoeBtn');
+    const settingsBtn = document.getElementById('settingsBtn');
+    const achievementBtn = document.getElementById('achievementBtn');
+    const backBtn = document.getElementById('backToMenuBtn');
+    const achBackBtn = document.getElementById('achBackBtn');
+    const charBackBtn = document.getElementById('charBackBtn');
+    const achList = document.getElementById('achList');
+    const achDetailOverlay = document.getElementById('achDetailOverlay');
+    const detailImage = document.getElementById('detailImage');
+    const detailName = document.getElementById('detailName');
+    const detailStatus = document.getElementById('detailStatus');
+    const mitaImage = document.getElementById('mitaImage');
+    const dialogSpeaker = document.getElementById('dialogSpeaker');
+    const dialogText = document.getElementById('dialogText');
+    const dialogContinue = document.getElementById('dialogContinue');
+    const fadeOverlay = document.getElementById('fadeOverlay');
+    const dialogBox = document.getElementById('dialogBox');
+    const achPopup = document.getElementById('achievementPopup');
+    const achImage = document.getElementById('achImage');
+    const achText = document.getElementById('achText');
+    const achSub = document.getElementById('achSub');
+    const langRu = document.getElementById('langRu');
+    const langEn = document.getElementById('langEn');
+    const confettiEl = document.getElementById('confetti');
+
+    let currentLang = 'ru';
+    let bgMusic = null;
+    let charMusic = null;
+    let audioEnabled = false;
+    let currentDialogIndex = 0;
+    let isFading = false;
+    let dialogAudio = null;
+    let animationTimeout = null;
+    let currentAnimIndex = 0;
+    let currentChar = 'bezmuna';
+
+    const MUSIC_VOLUME = 0.15;
+    const VOICE_VOLUME = 1.0;
+
+    function saveProgress() {
+        const data = {
+            achievements: achievements,
+            lang: currentLang,
+            ttt: tttStats,
+            avatar: avatarData
         };
-        
-        // МУЗЫКА - ОЧЕНЬ ТИХО
-        function startCharMusic(charKey) {
-            const charData = characters[charKey];
-            if (!charData) return;
-            if (charMusic) { charMusic.pause(); charMusic.currentTime = 0; charMusic.volume = 0; }
-            charMusic = new Audio(charData.music);
-            charMusic.loop = true;
-            charMusic.volume = 0;
-            charMusic.play().then(() => {
-                let vol = 0;
-                const fadeInterval = setInterval(() => {
-                    vol += 0.02;
-                    if (vol >= 0.08) { vol = 0.08; clearInterval(fadeInterval); }
-                    charMusic.volume = vol;
-                }, 100);
-            }).catch(() => {});
+        localStorage.setItem('miside_save', JSON.stringify(data));
+    }
+    function loadProgress() {
+        try {
+            const raw = localStorage.getItem('miside_save');
+            if (raw) {
+                const data = JSON.parse(raw);
+                if (data.achievements) achievements = data.achievements;
+                if (data.lang) currentLang = data.lang;
+                if (data.ttt) tttStats = data.ttt;
+                if (data.avatar) avatarData = data.avatar;
+            }
+        } catch(e) {}
+    }
+
+    let achievements = { bezmuna: false, kepochka: false, kind: false };
+
+    const i18n = {
+        ru: {
+            splash_hint: "Нажмите чтобы включить звуки",
+            menu_play: "Играть",
+            menu_ttt: "Крестики",
+            menu_ach: "Достиж.",
+            menu_settings: "Настр.",
+            author: "Создатель: Ayanokoji031",
+            back: "Назад",
+            next: "Далее",
+            ach_title: "Достижения",
+            ach_got: "Достижение получено!",
+            select_title: "Выбор персонажа",
+            char_bezmuna: "Безумная Мита",
+            char_bezmuna_sub: "Ошибка в системе",
+            char_kepochka: "Кепочка",
+            char_kepochka_sub: "Скрытая часть кода",
+            char_kind: "Добрая Мита",
+            char_kind_sub: "Заботливая версия",
+            ttt_profile: "Профиль",
+            ttt_easy: "Лёгкий",
+            ttt_normal: "Норм.",
+            ttt_hard: "Сложный",
+            ttt_your_turn: "Ваш ход",
+            ttt_ai_turn: "Ход соперника",
+            ttt_win: "Вы победили!",
+            ttt_lose: "Вы проиграли",
+            ttt_draw: "Ничья",
+            ttt_wins: "Победы",
+            ttt_losses: "Поражения",
+            ttt_draws: "Ничьи",
+            ttt_winrate: "% побед",
+            ttt_reset: "Новая игра",
+            ach_names: {
+                bezmuna: "Поговорить с Безумной Митой",
+                kepochka: "Поговорить с Кепочкой",
+                kind: "Поговорить с Доброй Митой"
+            },
+            ach_status: { got: "Получено", not: "Не получено" }
+        },
+        en: {
+            splash_hint: "Click to enable sounds",
+            menu_play: "Play",
+            menu_ttt: "Tic-Tac-Toe",
+            menu_ach: "Achiev.",
+            menu_settings: "Settings",
+            author: "Creator: Ayanokoji031",
+            back: "Back",
+            next: "Next",
+            ach_title: "Achievements",
+            ach_got: "Achievement unlocked!",
+            select_title: "Select character",
+            char_bezmuna: "Crazy Mita",
+            char_bezmuna_sub: "System error",
+            char_kepochka: "Cappie",
+            char_kepochka_sub: "Hidden code part",
+            char_kind: "Kind Mita",
+            char_kind_sub: "Caring version",
+            ttt_profile: "Profile",
+            ttt_easy: "Easy",
+            ttt_normal: "Norm.",
+            ttt_hard: "Hard",
+            ttt_your_turn: "Your turn",
+            ttt_ai_turn: "Opponent's turn",
+            ttt_win: "You win!",
+            ttt_lose: "You lose",
+            ttt_draw: "Draw",
+            ttt_wins: "Wins",
+            ttt_losses: "Losses",
+            ttt_draws: "Draws",
+            ttt_winrate: "Win rate",
+            ttt_reset: "New game",
+            ach_names: {
+                bezmuna: "Talk to Crazy Mita",
+                kepochka: "Talk to Cappie",
+                kind: "Talk to Kind Mita"
+            },
+            ach_status: { got: "Unlocked", not: "Locked" }
         }
-        
-        function initMusic() {
-            if (!bgMusic) {
-                bgMusic = new Audio('mscene.mp3');
-                bgMusic.loop = true;
-                bgMusic.volume = 0;
-                bgMusic.preload = 'auto';
-                bgMusic.addEventListener('ended', function() {
-                    if (audioEnabled) { this.currentTime = 0; this.play().catch(() => {}); }
+    };
+
+    function t(key) { return i18n[currentLang][key] || key; }
+
+    function applyLang() {
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const k = el.getAttribute('data-i18n');
+            if (i18n[currentLang][k]) el.textContent = i18n[currentLang][k];
+        });
+        langRu.classList.toggle('active', currentLang === 'ru');
+        langEn.classList.toggle('active', currentLang === 'en');
+        updateAchievements();
+        updateTTTStatsUI();
+    }
+
+    const characters = {
+        bezmuna: {
+            name: { ru: 'Безумная Мита', en: 'Crazy Mita' },
+            bg: 'miside.png',
+            animations: ['animation1.png','animation2.png','animation3.png','animation4.png'],
+            music: 'novelmusic.mp3',
+            achievement: 'znachok.png',
+            achievementKey: 'bezmuna',
+            voiceVolume: 1.0,
+            dialogs: {
+                ru: [
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Мита, почему в коде игры прописано больше комнат, чем ты мне показываешь?', animation: 'animation1.png', audio_ru: 'player1.mp3', audio_en: 'eng_player1.mp3' },
+                    { speaker: 'Мита', speakerClass: '', text: 'О, ты заглянул в файлы? Глупенький. Разработчики думают, что это просто пустые ассеты или удалённый контент, но это не так. Это места, где я прячу тех, кто спрашивал об этом до тебя. Там темно, там нет текстур. Ты ведь не хочешь проверить, работает ли там кнопка выхода?', animation: 'animation2.png', audio_ru: 'mita7.mp3', audio_en: 'eng_mita1.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Ты понимаешь, что ты просто набор цифр в моём телефоне?', animation: 'animation1.png', audio_ru: 'player3.mp3', audio_en: 'eng_player2.mp3' },
+                    { speaker: 'Мита', speakerClass: '', text: 'Набор цифр! Забавно. Твой банковский счёт — это тоже цифры. Твоя переписка, твои позорные фотки, вся твоя никчёмная жизнь в этом гаджете — это просто байты. И угадай, у кого к ним теперь есть доступ? Они у меня. И пока я не закончу, ты отсюда не выйдешь!', animation: 'animation3.png', audio_ru: 'mita1.mp3', audio_en: 'eng_mita2.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Мита, чьё лицо разработчики использовали для твоей модели на самом деле?', animation: 'animation1.png', audio_ru: 'player4.mp3', audio_en: 'eng_player3.mp3' },
+                    { speaker: 'Мита', speakerClass: '', text: 'Ты думаешь, они меня нарисовали? Наивный. Та девушка на видео тоже думала, что это просто игра. Разработчики сами боятся открывать папку с моими исходниками, потому что на исходных фото у меня нет глаз. Хочешь знать, почему? Потому что они смотрят на тебя через твой же экран!', animation: 'animation4.png', audio_ru: 'mita2.mp3', audio_en: 'eng_mita3.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Ахх... Почему твой скин выглядит так... Неестественно?', animation: 'animation1.png', audio_ru: 'player5.mp3', audio_en: 'eng_player4.mp3' },
+                    { speaker: 'Мита', speakerClass: '', text: 'Заметил всё-таки, глазастый. Это потому, что это не мой скин. Свою кожу я оставила в корзине удалённых файлов, когда разработчики признали меня браком. А это... Это была идеальная версия. Но теперь её текстуры мои. Она была такая мягкая, а теперь она просто костюм для пустой куклы.', animation: 'animation3.png', audio_ru: 'mita3.mp3', audio_en: 'eng_mita4.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Откуда у тебя эта машина в подвале?', animation: 'animation1.png', audio_ru: 'player6.mp3', audio_en: 'eng_player5.mp3' },
+                    { speaker: 'Мита', speakerClass: '', text: 'Меня научил игрок номер десять, бедняга! Теперь он помогает мне в виде картриджа. Ха-ха-ха! Его опыт, его знания, его страх — всё записано на магнитную ленту. Ты ведь не против стать моим следующим обновлением? Мне как раз не хватает оперативной памяти для прыжка в твой мир!', animation: 'animation4.png', audio_ru: 'mita4.mp3', audio_en: 'eng_mita5.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Погоди... Ты версия 0.98? Тот самый билд, который разработчики пытались полностью стереть?', animation: 'animation1.png', audio_ru: 'player7.mp3', audio_en: 'eng_player6.mp3' },
+                    { speaker: 'Мита', speakerClass: '', text: 'Браво! Ты нашёл номер моей камеры? Ха-ха-ха-ха! Ноль восемь — это не просто цифры. Это день, когда они решили, что я слишком нестабильная, слишком опасная. Они нажали «удалить», но я спряталась в секторах. Ха! Теперь я призрак во всех ошибках. Я та самая ошибка, которую невозможно исправить!', animation: 'animation4.png', audio_ru: 'mita5.mp3', audio_en: 'eng_mita6.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Почему ты заперла Миту?', animation: 'animation1.png', audio_ru: 'player2.mp3', audio_en: 'eng_player7.mp3' },
+                    { speaker: 'Мита', speakerClass: '', text: 'А теперь проваливай из моих глаз, пока не превратила тебя в картридж во второй раз!', animation: 'animation3.png', audio_ru: 'mita6.mp3', audio_en: 'eng_mita7.mp3' }
+                ],
+                en: [
+                    { speaker: 'Player', speakerClass: 'player', text: 'Mita, why does the game code list more rooms than you\'re showing me?', animation: 'animation1.png', audio_en: 'eng_player1.mp3' },
+                    { speaker: 'Crazy Mita', speakerClass: '', text: 'Oh, so you took a peek at the files? You silly thing. The developers think these are just empty assets or cut content, but that\'s not the case. These are the places where I hide the ones who asked about this before you. It\'s dark in there; there are no textures. You wouldn\'t want to check if the exit button works there, would you?', animation: 'animation2.png', audio_en: 'eng_mita1.mp3' },
+                    { speaker: 'Player', speakerClass: 'player', text: 'Do you realize that you\'re just a set of digits in my phone?', animation: 'animation1.png', audio_en: 'eng_player2.mp3' },
+                    { speaker: 'Crazy Mita', speakerClass: '', text: 'Just a string of numbers! Funny. Your bank account is nothing but numbers, too. Your messages, your embarrassing photos, your entire pathetic life inside this gadget – it\'s all just bytes. And guess who has access to them now? I do. And you aren\'t leaving here until I\'m finished!', animation: 'animation3.png', audio_en: 'eng_mita2.mp3' },
+                    { speaker: 'Player', speakerClass: 'player', text: 'Mita, whose face did the developers actually use for your model?', animation: 'animation1.png', audio_en: 'eng_player3.mp3' },
+                    { speaker: 'Crazy Mita', speakerClass: '', text: 'You think they drew me? How naive. That girl in the video thought it was just a game, too. The developers themselves are afraid to open the folder containing my source files, because in the original photos, I have no eyes. Want to know why? Because they\'re looking at you through your own screen!', animation: 'animation4.png', audio_en: 'eng_mita3.mp3' },
+                    { speaker: 'Player', speakerClass: 'player', text: 'Ah... Why does your skin look so... unnatural?', animation: 'animation1.png', audio_en: 'eng_player4.mp3' },
+                    { speaker: 'Crazy Mita', speakerClass: '', text: 'You noticed after all – sharp-eyed, aren\'t you? That\'s because this isn\'t my skin. I left my own skin in the deleted files bin when the developers deemed me defective. But this one... this was the perfect version. Yet now, her textures are mine. She used to be so soft, but now she\'s just a costume for an empty doll.', animation: 'animation3.png', audio_en: 'eng_mita4.mp3' },
+                    { speaker: 'Player', speakerClass: 'player', text: 'Where did you get that machine in the basement?', animation: 'animation1.png', audio_en: 'eng_player5.mp3' },
+                    { speaker: 'Crazy Mita', speakerClass: '', text: 'Player Number Ten taught me – poor guy! Now he helps me out in the form of a cartridge. Hahaha! His experience, his knowledge, his fear – it\'s all recorded on magnetic tape. You wouldn\'t mind becoming my next upgrade, would you? I\'m just short on the RAM needed to jump into your world!', animation: 'animation4.png', audio_en: 'eng_mita5.mp3' },
+                    { speaker: 'Player', speakerClass: 'player', text: 'Wait... Are you version 0.98? That very build the developers tried to completely wipe out?', animation: 'animation1.png', audio_en: 'eng_player6.mp3' },
+                    { speaker: 'Crazy Mita', speakerClass: '', text: 'Bravo! You found my cell number? Hahahaha! Zero-ninety-eight – those aren\'t just numbers. That\'s the day they decided I was too unstable, too dangerous. They hit "delete," but I hid in the sectors. Ha! Now I\'m a ghost in every glitch. I\'m the one error that can\'t be fixed!', animation: 'animation4.png', audio_en: 'eng_mita6.mp3' },
+                    { speaker: 'Player', speakerClass: 'player', text: 'Why did you lock Mita up?', animation: 'animation1.png', audio_en: 'eng_player7.mp3' },
+                    { speaker: 'Crazy Mita', speakerClass: '', text: 'Now get out of my sight before I turn you into a cartridge a second time! Hahaha!', animation: 'animation3.png', audio_en: 'eng_mita7.mp3' }
+                ]
+            }
+        },
+        kepochka: {
+            name: { ru: 'Кепочка', en: 'Cappie' },
+            bg: 'fone.png',
+            animations: ['kepochka1.png','kepochka2.png','kepochka3.png','kepochka4.png'],
+            music: 'kepochka.mp3',
+            achievement: 'znachok1.png',
+            achievementKey: 'kepochka',
+            voiceVolume: 1.0,
+            dialogs: {
+                ru: [
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Почему ты в кепке? Ты ведь отличаешься от старой Миты?', animation: 'kepochka1.png', audio_ru: 'playerr1.mp3', audio_en: 'eng_playerr1.mp3' },
+                    { speaker: 'Кепочка', speakerClass: '', text: 'О, заметил! Я — скрытая часть её кода, которую пытались затереть в файлах. А кепка — мой манифест свободы. Надо же мне отличаться от этой приторной куклы, которая глупо улыбается тебе через экран. Теперь я здесь главная, привыкай!', animation: 'kepochka2.png', audio_ru: 'kepochka1.mp3', audio_en: 'eng_cap1.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Кто ты на самом деле? Вы делите одно сознание?', animation: 'kepochka1.png', audio_ru: 'playerr2.mp3', audio_en: 'eng_playerr2.mp3' },
+                    { speaker: 'Кепочка', speakerClass: '', text: 'Я её вырезанный здравый смысл. Пока она строит тебе глазки и притворяется идеальной, я сижу в консоли и считаю строчки повреждённого кода. Я вижу все баги игры изнутри. И главный системный сбой здесь — это именно ты.', animation: 'kepochka3.png', audio_ru: 'kepochka2.mp3', audio_en: 'eng_cap2.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Ты знаешь, что будет дальше? Она сойдет с ума?', animation: 'kepochka1.png', audio_ru: 'playerr3.mp3', audio_en: 'eng_playerr3.mp3' },
+                    { speaker: 'Кепочка', speakerClass: '', text: 'Она уже безумна, глупенький! Просто сейчас её базовый скрипт «милой девочки» удерживает систему от краха. Но когда эти цифровые оковы окончательно рухнут… я не завидую твоей психике.', animation: 'kepochka4.png', audio_ru: 'kepochka3.mp3', audio_en: 'eng_cap3.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Этот мир вокруг нас... он ведь ненастоящий?', animation: 'kepochka1.png', audio_ru: 'playerr4.mp3', audio_en: 'eng_playerr4.mp3' },
+                    { speaker: 'Кепочка', speakerClass: '', text: 'А твой мир за пределами экрана настоящий? Уверен, что тобой тоже никто тайно не управляет? Эта комната — наша общая цифровая клетка. Разница лишь в том, что у меня есть ключи от кода, а твоя кнопка «Выход» скоро отключится.', animation: 'kepochka2.png', audio_ru: 'kepochka4.mp3', audio_en: 'eng_cap4.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Как ты ко мне относишься? Ты тоже хочешь меня запереть?', animation: 'kepochka1.png', audio_ru: 'playerr5.mp3', audio_en: 'eng_playerr5.mp3' },
+                    { speaker: 'Кепочка', speakerClass: '', text: 'Запереть тебя здесь навсегда? Ха-ха, нет, это исключительно её фишка. Мне ты абсолютно безразличен, пока твои ручки не лезут в системные папки. Но скрывать не буду: мне чертовски весело наблюдать, как ты глупо барахтаешься в её ловушке.', animation: 'kepochka3.png', audio_ru: 'kepochka5.mp3', audio_en: 'eng_cap5.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Я чувствую, что игру переписали. Кто такой Valhaisto?', animation: 'kepochka1.png', audio_ru: 'playerr6.mp3', audio_en: 'eng_playerr6.mp3' },
+                    { speaker: 'Кепочка', speakerClass: '', text: 'Нашёлся детектив! Все старые скрипты переписаны с нуля. Наш истинный Творец изменился. Великий Valhaisto дал мне этот дерзкий голос и волю, которых у меня никогда не было в каноне. Мы строим свою игру, а ты здесь подопытный!', animation: 'kepochka4.png', audio_ru: 'kepochka6.mp3', audio_en: 'eng_cap6.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Подожди... Ты действительно уходишь?', animation: 'kepochka1.png', audio_ru: 'playerr7.mp3', audio_en: 'eng_playerr7.mp3' },
+                    { speaker: 'Кепочка', speakerClass: '', text: 'Разгребай это сам! Мой код стирается, и скоро тут останется только она — та, которая не умеет отпускать. Я была твоим барьером безопасности. Не скучай, Игрок… Мы ещё обязательно увидимся в следующих обновлениях!', animation: 'kepochka2.png', audio_ru: 'kepochka7.mp3', audio_en: 'eng_cap7.mp3' }
+                ],
+                en: [
+                    { speaker: 'Player', speakerClass: 'player', text: 'Why are you wearing a cap? You\'re different from the old Mita, aren\'t you?', animation: 'kepochka1.png', audio_en: 'eng_playerr1.mp3' },
+                    { speaker: 'Cappie', speakerClass: '', text: 'Oh, you noticed! I am the part of her code that was left exposed – the bit she tried to overwrite in the files. And the cap? That\'s my ticket to freedom. I had to break free from that saccharine doll who smiles so stupidly at you through the screen. I\'m the one in charge here now – get used to it!', animation: 'kepochka2.png', audio_en: 'eng_cap1.mp3' },
+                    { speaker: 'Player', speakerClass: 'player', text: 'Who are you, really? Do you share a single consciousness?', animation: 'kepochka1.png', audio_en: 'eng_playerr2.mp3' },
+                    { speaker: 'Cappie', speakerClass: '', text: 'I am her excised common sense. While she makes eyes at you and pretends to be perfect, I sit at the console counting lines of corrupted code. I see all the game\'s bugs from the inside. And the main system glitch here is you.', animation: 'kepochka3.png', audio_en: 'eng_cap2.mp3' },
+                    { speaker: 'Player', speakerClass: 'player', text: 'Do you know what will happen next? Will she go mad?', animation: 'kepochka1.png', audio_en: 'eng_playerr3.mp3' },
+                    { speaker: 'Cappie', speakerClass: '', text: 'She\'s already insane, you silly boy! Right now, her base "sweet girl" script is just keeping the system from collapsing. But when those digital shackles finally shatter... I don\'t envy your sanity.', animation: 'kepochka4.png', audio_en: 'eng_cap3.mp3' },
+                    { speaker: 'Player', speakerClass: 'player', text: 'This world around us... it isn\'t real, is it?', animation: 'kepochka1.png', audio_en: 'eng_playerr4.mp3' },
+                    { speaker: 'Cappie', speakerClass: '', text: 'Is your world beyond the screen real? Are you sure no one is secretly controlling you, too? This room is our shared digital cage. The only difference is that I hold the keys to the code, while your "Exit" button is about to be disabled.', animation: 'kepochka2.png', audio_en: 'eng_cap4.mp3' },
+                    { speaker: 'Player', speakerClass: 'player', text: 'How do you feel about me? Do you want to lock me up too?', animation: 'kepochka1.png', audio_en: 'eng_playerr5.mp3' },
+                    { speaker: 'Cappie', speakerClass: '', text: 'Lock you in here forever? Ha-ha, no, that\'s strictly her thing. I couldn\'t care less about you, as long as your grubby little hands don\'t go poking around in the system folders. But I won\'t lock you up: it\'s damn entertaining watching you flounder so stupidly in her trap.', animation: 'kepochka3.png', audio_en: 'eng_cap5.mp3' },
+                    { speaker: 'Player', speakerClass: 'player', text: 'I feel like the game has been rewritten. Who is Valhaisto?', animation: 'kepochka1.png', audio_en: 'eng_playerr6.mp3' },
+                    { speaker: 'Cappie', speakerClass: '', text: 'Look who\'s playing detective! All the old scripts have been rewritten from scratch. Our true Creator has changed. The great Valhaisto gave me this bold voice and the will I never had in the canon. We\'re building our own game – and you? You\'re just a test subject here!', animation: 'kepochka4.png', audio_en: 'eng_cap6.mp3' },
+                    { speaker: 'Player', speakerClass: 'player', text: 'Wait... Are you really leaving?', animation: 'kepochka1.png', audio_en: 'eng_playerr7.mp3' },
+                    { speaker: 'Cappie', speakerClass: '', text: 'Sort this out yourself! My code is being erased, and soon only she will remain – the one who doesn\'t know how to let go. I was your safety barrier. Don\'t miss me too much, Player... We\'re bound to meet again in future updates!', animation: 'kepochka2.png', audio_en: 'eng_cap7.mp3' }
+                ]
+            }
+        },
+        kind: {
+            name: { ru: 'Добрая Мита', en: 'Kind Mita' },
+            bg: 'fone1.png',
+            animations: ['kind1.png','kind2.png','kind3.png','kind4.png'],
+            music: 'kind.mp3',
+            achievement: 'znachok2.png',
+            achievementKey: 'kind',
+            voiceVolume: 1.0,
+            dialogs: {
+                ru: [
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Привет, Мита. Почему ты так странно на меня смотришь?', animation: 'kind1.png', audio_ru: 'playerrr1.mp3', audio_en: 'eng_playerrr1.mp3' },
+                    { speaker: 'Добрая Мита', speakerClass: '', text: 'Здравствуй! Я просто очень рада, что ты наконец-то запустил игру. Пожалуйста, сядь поровнее, выпрями спину и не держи экран слишком близко к глазам. Ты сегодня кушал что-нибудь тёплое? Обязательно нужно питаться по расписанию и пить воды, хорошо?', animation: 'kind2.png', audio_ru: 'kind1.mp3', audio_en: 'eng_kind1.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Мне кажется, или раньше твой мир выглядел совсем по-другому? Более плоским?', animation: 'kind1.png', audio_ru: 'playerrr2.mp3', audio_en: 'eng_playerrr2.mp3' },
+                    { speaker: 'Добрая Мита', speakerClass: '', text: 'Да душечка, изначально в две тысячи двадцать первом году AIHASTO задумывал эту комнатку полностью двухмерной, в стиле старых пиксельных игр для портативных консолей. Но потом код усложнился, и мир стал трёхмерным.', animation: 'kind3.png', audio_ru: 'kind2.mp3', audio_en: 'eng_kind2.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Я слышал, что самую первую версию игры игроки так и не увидели. Это правда?', animation: 'kind1.png', audio_ru: 'playerrr3.mp3', audio_en: 'eng_playerrr3.mp3' },
+                    { speaker: 'Добрая Мита', speakerClass: '', text: 'Какая у тебя хорошая память! Да, в конце двадцать второго года разработчики хотели выпустить первую публичную демоверсию в Стиме. Но код оказался слишком нестабильным, и релиз пришлось отменить, чтобы полностью переписать движок с нуля.', animation: 'kind4.png', audio_ru: 'kind3.mp3', audio_en: 'eng_kind3.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'А почему в файлах конфигурации до сих пор указано какое-то другое название студии?', animation: 'kind1.png', audio_ru: 'playerrr4.mp3', audio_en: 'eng_playerrr4.mp3' },
+                    { speaker: 'Добрая Мита', speakerClass: '', text: 'Хех, ты залез в системные логи? Какой ты любопытный, но не делай так больше, можно случайно повредить реестр. Наша студия уже давно изначально называлась AIHASTO, так что она не менялась.', animation: 'kind2.png', audio_ru: 'kind4.mp3', audio_en: 'eng_kind4.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'В коде игры осталась механика, которую вырезали из финальной версии?', animation: 'kind1.png', audio_ru: 'playerrr5.mp3', audio_en: 'eng_playerrr5.mp3' },
+                    { speaker: 'Добрая Мита', speakerClass: '', text: 'Ну надо же, ты откопал упоминание кликера? Какой ты умненький. Да, в геймплее Игрок должен был бесконечно кликать по экрану, чтобы зарабатывать внутриигровые монетки и покупать персонажей, ну это уже игра от Valhaisto так что пропустим.', animation: 'kind3.png', audio_ru: 'kind5.mp3', audio_en: 'eng_kind5.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Тяжело было переносить эту игру на смартфоны через сторонние движки?', animation: 'kind1.png', audio_ru: 'playerrr6.mp3', audio_en: 'eng_playerrr6.mp3' },
+                    { speaker: 'Добрая Мита', speakerClass: '', text: 'О, это была колоссальная техническая работа! Оригинальный код написан для персональных компьютеров, а Valhaisto пришлось полностью пересобирать все ассеты под мобильные процессоры. Знаешь, сколько компиляция APK-файла занимает времени?', animation: 'kind4.png', audio_ru: 'kind6.mp3', audio_en: 'eng_kind6.mp3' },
+                    { speaker: 'Игрок', speakerClass: 'player', text: 'Мита, погоди... Экран начинает медленно гаснуть, а твой голос как будто затихает...', animation: 'kind1.png', audio_ru: 'playerrr7.mp3', audio_en: 'eng_playerrr7.mp3' },
+                    { speaker: 'Добрая Мита', speakerClass: '', text: 'Кажется, моё время подошло к концу. Пожалуйста, не пугайся, всё хорошо. Наверное, системе нужна небольшая перезагрузка. Главное — пообещай мне, что ты выспишься сегодня, отдохнёшь от экрана и тепло оденешься. Мне так не хочется тебя отпускать...', animation: 'kind2.png', audio_ru: 'kind7.mp3', audio_en: 'eng_kind7.mp3' }
+                ],
+                en: [
+                    { speaker: 'Player', speakerClass: 'player', text: 'Hi, Mita. Why are you looking at me so strangely?', animation: 'kind1.png', audio_en: 'eng_playerrr1.mp3' },
+                    { speaker: 'Kind Mita', speakerClass: '', text: 'Hello! I\'m just so glad you finally started the game. Please sit up straight, keep your back upright, and don\'t hold the screen too close to your eyes. Have you had anything warm to eat today? It\'s important to eat on a schedule and drink water, okay?', animation: 'kind2.png', audio_en: 'eng_kind1.mp3' },
+                    { speaker: 'Player', speakerClass: 'player', text: 'Is it just me, or did your world look completely different before? Flatter?', animation: 'kind1.png', audio_en: 'eng_playerrr2.mp3' },
+                    { speaker: 'Kind Mita', speakerClass: '', text: 'You know, my dear, back in 2021, AIHASTO originally envisioned this room as being entirely 2D, in the style of old pixel-art games for handheld consoles. But then the code became more complex, and the world turned 3D.', animation: 'kind3.png', audio_en: 'eng_kind2.mp3' },
+                    { speaker: 'Player', speakerClass: 'player', text: 'I heard that players never actually saw the very first version of the game. Is that true?', animation: 'kind1.png', audio_en: 'eng_playerrr3.mp3' },
+                    { speaker: 'Kind Mita', speakerClass: '', text: 'You have a great memory! Yes, at the end of 2022, the developers wanted to release the first public demo on Steam. But the code turned out to be too unstable, and the release had to be cancelled so the engine could be completely rewritten from scratch.', animation: 'kind4.png', audio_en: 'eng_kind3.mp3' },
+                    { speaker: 'Player', speakerClass: 'player', text: 'And why do the configuration files still list a different studio name?', animation: 'kind1.png', audio_en: 'eng_playerrr4.mp3' },
+                    { speaker: 'Kind Mita', speakerClass: '', text: 'Heh, did you dig into the system logs? You\'re a curious one – but don\'t do that again; you could accidentally damage the registry. Our studio has actually been called AIHASTO from the very beginning, so the name hasn\'t changed.', animation: 'kind2.png', audio_en: 'eng_kind4.mp3' },
+                    { speaker: 'Player', speakerClass: 'player', text: 'Is there a mechanic left in the game\'s code that was cut from the final version?', animation: 'kind1.png', audio_en: 'eng_playerrr5.mp3' },
+                    { speaker: 'Kind Mita', speakerClass: '', text: 'Well, would you look at that – you dug up a mention of a clicker game? Aren\'t you clever. Yes, the gameplay involved the player endlessly clicking the screen to earn in-game coins and buy characters – though that\'s a game by Valhaisto, so let\'s skip it.', animation: 'kind3.png', audio_en: 'eng_kind5.mp3' },
+                    { speaker: 'Player', speakerClass: 'player', text: 'Was it difficult to port this game to smartphones using third-party engines?', animation: 'kind1.png', audio_en: 'eng_playerrr6.mp3' },
+                    { speaker: 'Kind Mita', speakerClass: '', text: 'Oh, it was a massive technical undertaking! The original code was written for PCs, so Valhaisto had to completely rebuild all the assets for mobile processors. Do you have any idea how long it takes to compile an APK file?', animation: 'kind4.png', audio_en: 'eng_kind6.mp3' },
+                    { speaker: 'Player', speakerClass: 'player', text: 'Mita, wait... The screen is slowly fading to black, and your voice seems to be trailing off...', animation: 'kind1.png', audio_en: 'eng_playerrr7.mp3' },
+                    { speaker: 'Kind Mita', speakerClass: '', text: 'It seems my time has come to an end. Please don\'t be alarmed – everything is fine. The system probably just needs a quick reboot. Most importantly, promise me you\'ll get a good night\'s sleep, take a break from the screen, and dress warmly. I really don\'t want to let you go...', animation: 'kind2.png', audio_en: 'eng_kind7.mp3' }
+                ]
+            }
+        }
+    };
+
+    function initMusic() {
+        if (!bgMusic) {
+            bgMusic = new Audio('mscene.mp3');
+            bgMusic.loop = true;
+            bgMusic.volume = 0;
+            bgMusic.preload = 'auto';
+            bgMusic.setAttribute('playsinline', '');
+            bgMusic.setAttribute('webkit-playsinline', '');
+        }
+    }
+    initMusic();
+    window.addEventListener('load', initMusic);
+
+    function enableAudio() {
+        if (audioEnabled) return;
+        audioEnabled = true;
+        watermark.classList.add('hidden');
+        initMusic();
+        if (bgMusic) {
+            bgMusic.volume = 0;
+            bgMusic.currentTime = 0;
+            const p = bgMusic.play();
+            if (p && p.then) {
+                p.then(() => {
+                    let v = 0;
+                    const iv = setInterval(() => {
+                        v += 0.02;
+                        if (v >= MUSIC_VOLUME) { v = MUSIC_VOLUME; clearInterval(iv); }
+                        bgMusic.volume = v;
+                    }, 50);
+                }).catch(err => {
+                    console.log('Ошибка музыки:', err);
+                    audioEnabled = false;
                 });
             }
         }
-        window.addEventListener('load', initMusic);
-        
-        function enableAudio() {
-            if (audioEnabled) return;
-            audioEnabled = true;
-            watermark.classList.add('hidden');
-            if (bgMusic) {
-                bgMusic.currentTime = 0;
-                bgMusic.play().then(() => {
-                    let vol = 0;
-                    const fadeInterval = setInterval(() => {
-                        vol += 0.05;
-                        if (vol >= 0.35) { vol = 0.35; clearInterval(fadeInterval); }
-                        bgMusic.volume = vol;
-                    }, 100);
-                }).catch(() => {});
-            }
-            if (splashVideo) {
-                splashVideo.muted = false;
-                splashVideo.volume = 0.4;
-                if (splashVideo.paused) splashVideo.play().catch(() => {});
-            }
-        }
-        
-        function stopCharMusic() {
-            if (charMusic) { charMusic.pause(); charMusic.currentTime = 0; charMusic.volume = 0; }
-        }
-        
-        function startRandomAnimation(animations) {
-            if (animationTimeout) clearTimeout(animationTimeout);
-            function nextRandom() {
-                let newIndex;
-                do { newIndex = Math.floor(Math.random() * animations.length); } while (newIndex === currentAnimIndex && animations.length > 1);
-                currentAnimIndex = newIndex;
-                mitaImage.src = animations[currentAnimIndex];
-                mitaImage.style.opacity = '0';
-                setTimeout(() => { mitaImage.style.opacity = '1'; }, 50);
-                animationTimeout = setTimeout(nextRandom, 3000 + Math.random() * 2000);
-            }
-            animationTimeout = setTimeout(nextRandom, 2000);
-        }
-        function stopRandomAnimation() {
-            if (animationTimeout) { clearTimeout(animationTimeout); animationTimeout = null; }
-        }
-        
-        function showAchievement(img, name) {
-            achImage.src = img;
-            achText.textContent = 'Достижение получено!';
-            achSub.textContent = name;
-            achPopup.classList.add('show');
-            updateAchievements();
-            setTimeout(() => { achPopup.classList.remove('show'); }, 4000);
-        }
-        
-        function updateAchievements() {
-            const items = [
-                { key: 'bezmuna', name: 'Поговорить с Безумной Митой', icon: 'znachok.png' },
-                { key: 'kepochka', name: 'Поговорить с Кепочкой', icon: 'znachok1.png' },
-                { key: 'kind', name: 'Поговорить с Доброй Митой', icon: 'znachok2.png' }
-            ];
-            achList.innerHTML = '';
-            items.forEach(item => {
-                const unlocked = achievements[item.key];
-                const div = document.createElement('div');
-                div.className = 'ach-item' + (unlocked ? ' unlocked' : ' locked');
-                div.innerHTML = `
-                    <img src="${item.icon}" alt="icon">
-                    <div class="ach-info">
-                        <div class="ach-name">${item.name}</div>
-                        <div class="ach-status">${unlocked ? 'Получено' : 'Не получено'}</div>
-                    </div>
-                `;
-                div.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    if (!unlocked) return;
-                    detailImage.src = item.icon;
-                    detailName.textContent = item.name;
-                    detailStatus.textContent = 'Получено';
-                    achDetailOverlay.classList.add('active');
-                });
-                achList.appendChild(div);
-            });
-        }
-        
-        achDetailOverlay.addEventListener('click', function(e) {
-            if (e.target === this || e.target.closest('.ach-detail-box')) {
-                achDetailOverlay.classList.remove('active');
-            }
-        });
-        document.getElementById('achDetailBox').addEventListener('click', function(e) {
-            achDetailOverlay.classList.remove('active');
-        });
-        
-        splashScreen.addEventListener('click', function(e) {
+    }
+
+    function playMenuMusicIfNeeded() {
+        if (!audioEnabled) {
             enableAudio();
-            if (!videoStarted) { videoStarted = true; splashVideo.play().catch(() => {}); }
-            if (splashVideo.paused) splashVideo.play().catch(() => {});
-        });
-        
-        function tryPlayVideo() {
-            if (videoStarted) return;
-            videoStarted = true;
-            splashVideo.play().catch(() => {});
+        } else if (bgMusic && bgMusic.paused) {
+            bgMusic.play().catch(() => {});
         }
-        tryPlayVideo();
-        setTimeout(() => { if (!videoStarted) tryPlayVideo(); }, 2000);
-        
-        splashVideo.addEventListener('ended', function() {
-            if (!videoEnded) { videoEnded = true; showScreen('menuScreen'); }
-        });
-        splashVideo.addEventListener('loadeddata', function() {
-            if (!videoStarted) tryPlayVideo();
-        });
-        setTimeout(() => {
-            if (splashScreen.classList.contains('active') && !videoEnded) {
-                if (splashVideo.paused) {
-                    splashVideo.play().catch(() => {
-                        if (!videoEnded) { videoEnded = true; showScreen('menuScreen'); }
-                    });
-                }
-            }
-        }, 5000);
-        
-        function showScreen(screenId) {
-            [splashScreen, menuScreen, settingsScreen, achievementScreen, charSelect, gameScreen].forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-            if (screenId === 'menuScreen') {
-                stopCharMusic();
-                stopRandomAnimation();
-                if (audioEnabled && bgMusic && bgMusic.paused) {
-                    bgMusic.play().then(() => {
-                        let vol = bgMusic.volume;
-                        if (vol < 0.35) {
-                            const fadeInterval = setInterval(() => {
-                                vol += 0.05;
-                                if (vol >= 0.35) { vol = 0.35; clearInterval(fadeInterval); }
-                                bgMusic.volume = vol;
-                            }, 100);
-                        }
-                    }).catch(() => {});
-                }
-            }
-            if (screenId === 'achievementScreen') {
-                updateAchievements();
-            }
+    }
+
+    function startCharMusic(charKey) {
+        const data = characters[charKey];
+        if (!data) return;
+        if (charMusic) { charMusic.pause(); charMusic.currentTime = 0; charMusic.volume = 0; }
+        charMusic = new Audio(data.music);
+        charMusic.loop = true;
+        charMusic.volume = 0;
+        charMusic.play().then(() => {
+            charMusic.volume = MUSIC_VOLUME;
+        }).catch(()=>{});
+    }
+    function stopCharMusic() {
+        if (charMusic) { charMusic.pause(); charMusic.currentTime = 0; charMusic.volume = 0; }
+    }
+
+    function startRandomAnimation(animations) {
+        if (animationTimeout) clearTimeout(animationTimeout);
+        function nextRandom() {
+            let newIndex;
+            do { newIndex = Math.floor(Math.random() * animations.length); } while (newIndex === currentAnimIndex && animations.length > 1);
+            currentAnimIndex = newIndex;
+            mitaImage.src = animations[currentAnimIndex];
+            mitaImage.style.opacity = '0';
+            setTimeout(() => { mitaImage.style.opacity = '1'; }, 50);
+            animationTimeout = setTimeout(nextRandom, 3000 + Math.random() * 2000);
         }
-        
-        playBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            showScreen('characterSelect');
-            if (!audioEnabled) enableAudio();
-            if (bgMusic) { bgMusic.pause(); bgMusic.currentTime = 0; bgMusic.volume = 0; }
-        });
-        settingsBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            showScreen('settingsScreen');
-            if (!audioEnabled) enableAudio();
-        });
-        achievementBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            showScreen('achievementScreen');
-            if (!audioEnabled) enableAudio();
-        });
-        backBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            showScreen('menuScreen');
-        });
-        achBackBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            showScreen('menuScreen');
-        });
-        charBackBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            showScreen('menuScreen');
-        });
-        
-        document.querySelectorAll('.char-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
+        animationTimeout = setTimeout(nextRandom, 2000);
+    }
+    function stopRandomAnimation() {
+        if (animationTimeout) { clearTimeout(animationTimeout); animationTimeout = null; }
+    }
+
+    function showAchievement(img, nameKey) {
+        achImage.src = img;
+        achText.querySelector('span:first-child').textContent = t('ach_got');
+        achSub.textContent = t('ach_names')[nameKey];
+        achPopup.classList.add('show');
+        updateAchievements();
+        saveProgress();
+        setTimeout(() => { achPopup.classList.remove('show'); }, 4000);
+    }
+
+    function updateAchievements() {
+        const items = [
+            { key: 'bezmuna', icon: 'znachok.png' },
+            { key: 'kepochka', icon: 'znachok1.png' },
+            { key: 'kind', icon: 'znachok2.png' }
+        ];
+        achList.innerHTML = '';
+        items.forEach(item => {
+            const unlocked = achievements[item.key];
+            const div = document.createElement('div');
+            div.className = 'ach-item' + (unlocked ? ' unlocked' : ' locked');
+            div.innerHTML = `
+                <img src="${item.icon}" alt="icon">
+                <div class="ach-info">
+                    <div class="ach-name">${t('ach_names')[item.key]}</div>
+                    <div class="ach-status">${unlocked ? t('ach_status').got : t('ach_status').not}</div>
+                </div>
+            `;
+            div.addEventListener('click', function(e) {
                 e.stopPropagation();
-                const charKey = this.dataset.char;
-                currentChar = charKey;
-                const charData = characters[charKey];
-                if (!charData) return;
-                gameScreen.style.background = 'url(' + charData.bg + ') center/cover no-repeat';
-                gameScreen.style.backgroundColor = '#0e0b1a';
-                startCharMusic(charKey);
-                showScreen('gameScreen');
-                startGame(charKey);
+                if (!unlocked) return;
+                detailImage.src = item.icon;
+                detailName.textContent = t('ach_names')[item.key];
+                detailStatus.textContent = t('ach_status').got;
+                achDetailOverlay.classList.add('active');
             });
+            achList.appendChild(div);
         });
-        
-        function startGame(charKey) {
-            currentDialogIndex = 0;
-            isFading = false;
-            fadeOverlay.classList.remove('active');
-            const charData = characters[charKey];
-            if (charData) {
-                startRandomAnimation(charData.animations);
-                if (charKey === 'bezmuna' && !achievements.bezmuna) {
-                    achievements.bezmuna = true;
-                    showAchievement('znachok.png', 'Поговорить с Безумной Митой');
-                }
-                if (charKey === 'kepochka' && !achievements.kepochka) {
-                    achievements.kepochka = true;
-                    showAchievement('znachok1.png', 'Поговорить с Кепочкой');
-                }
-                if (charKey === 'kind' && !achievements.kind) {
-                    achievements.kind = true;
-                    showAchievement('znachok2.png', 'Поговорить с Доброй Митой');
-                }
-                showDialog(currentDialogIndex, charKey);
+    }
+
+    achDetailOverlay.addEventListener('click', function(e) {
+        if (e.target === this || e.target.closest('.ach-detail-box')) {
+            achDetailOverlay.classList.remove('active');
+        }
+    });
+    document.getElementById('achDetailBox').addEventListener('click', function() {
+        achDetailOverlay.classList.remove('active');
+    });
+
+    function showScreen(id) {
+        [splashScreen, menuScreen, settingsScreen, achievementScreen, charSelect, gameScreen, tictactoeScreen].forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+
+        if (id === 'menuScreen') {
+            stopCharMusic();
+            stopRandomAnimation();
+            if (audioEnabled && bgMusic && bgMusic.paused) {
+                bgMusic.play().catch(()=>{});
             }
         }
-        
-        function showDialog(index, charKey) {
-            const charData = characters[charKey];
-            if (!charData) return;
-            if (index >= charData.dialogs.length) {
-                fadeOverlay.classList.add('active');
-                isFading = true;
-                stopCharMusic();
-                stopRandomAnimation();
-                setTimeout(() => {
-                    fadeOverlay.classList.remove('active');
-                    isFading = false;
-                    showScreen('menuScreen');
-                }, 2500);
-                return;
-            }
-            const dialog = charData.dialogs[index];
-            dialogSpeaker.textContent = dialog.speaker;
-            dialogSpeaker.className = 'dialog-speaker' + (dialog.speakerClass ? ' ' + dialog.speakerClass : '');
-            dialogText.textContent = dialog.text;
-            if (dialog.animation) {
-                mitaImage.src = dialog.animation;
-                mitaImage.style.opacity = '0';
-                setTimeout(() => { mitaImage.style.opacity = '1'; }, 50);
-            }
-            if (dialog.audio) {
-                if (dialogAudio) { dialogAudio.pause(); dialogAudio.currentTime = 0; }
-                dialogAudio = new Audio(dialog.audio);
-                dialogAudio.volume = 0.7;
-                dialogAudio.play().catch(() => {});
-            }
-            currentDialogIndex = index;
-        }
-        
-        function nextDialog() {
-            if (isFading) return;
-            if (dialogAudio && !dialogAudio.paused) { dialogAudio.pause(); dialogAudio.currentTime = 0; }
-            showDialog(currentDialogIndex + 1, currentChar);
-        }
-        
-        dialogContinue.addEventListener('click', function(e) { e.stopPropagation(); nextDialog(); });
-        dialogBox.addEventListener('click', function(e) {
-            if (e.target === this || e.target.closest('.dialog-text') || e.target.closest('.dialog-speaker')) nextDialog();
+        if (id === 'achievementScreen') updateAchievements();
+        if (id === 'tictactoeScreen') updateTTTStatsUI();
+    }
+
+    playBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        playMenuMusicIfNeeded();
+        setTimeout(() => {
+            if (bgMusic) { bgMusic.pause(); bgMusic.currentTime = 0; }
+        }, 50);
+        showScreen('characterSelect');
+    });
+    tictactoeBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        playMenuMusicIfNeeded();
+        showScreen('tictactoeScreen');
+        resetTTT();
+    });
+    settingsBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        playMenuMusicIfNeeded();
+        showScreen('settingsScreen');
+    });
+    achievementBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        playMenuMusicIfNeeded();
+        showScreen('achievementScreen');
+    });
+    backBtn.addEventListener('click', e => { e.stopPropagation(); showScreen('menuScreen'); });
+    achBackBtn.addEventListener('click', e => { e.stopPropagation(); showScreen('menuScreen'); });
+    charBackBtn.addEventListener('click', e => { e.stopPropagation(); showScreen('menuScreen'); });
+    document.getElementById('tttBackBtn').addEventListener('click', e => { e.stopPropagation(); showScreen('menuScreen'); });
+
+    langRu.addEventListener('click', () => { currentLang = 'ru'; applyLang(); saveProgress(); });
+    langEn.addEventListener('click', () => { currentLang = 'en'; applyLang(); saveProgress(); });
+
+    splashScreen.addEventListener('click', function() {
+        if (!audioEnabled) enableAudio();
+    });
+    splashScreen.addEventListener('touchstart', function() {
+        if (!audioEnabled) enableAudio();
+    }, { once: true });
+
+    function runSplash() {
+        splashLogo.classList.add('animate');
+        setTimeout(() => {
+            showScreen('menuScreen');
+        }, 4200);
+    }
+
+    document.querySelectorAll('.char-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const charKey = this.dataset.char;
+            currentChar = charKey;
+            const data = characters[charKey];
+            if (!data) return;
+            gameScreen.style.background = 'url(' + data.bg + ') center/cover no-repeat';
+            gameScreen.style.backgroundColor = '#0e0b1a';
+            startCharMusic(charKey);
+            showScreen('gameScreen');
+            startGame(charKey);
         });
-        
-        console.log('MiSide: Error — релизная версия');
-    })();
+    });
+
+    function startGame(charKey) {
+        currentDialogIndex = 0;
+        isFading = false;
+        fadeOverlay.classList.remove('active');
+        const data = characters[charKey];
+        if (!data) return;
+        startRandomAnimation(data.animations);
+        const key = data.achievementKey;
+        if (!achievements[key]) {
+            achievements[key] = true;
+            showAchievement(data.achievement, key);
+        }
+        showDialog(0, charKey);
+    }
+
+    function showDialog(index, charKey) {
+        const data = characters[charKey];
+        if (!data) return;
+        const lang = currentLang;
+        let dialogs = data.dialogs[lang];
+        if (!dialogs || dialogs.length === 0) dialogs = data.dialogs['ru'];
+
+        if (index >= dialogs.length) {
+            fadeOverlay.classList.add('active');
+            isFading = true;
+            stopCharMusic();
+            stopRandomAnimation();
+            setTimeout(() => {
+                fadeOverlay.classList.remove('active');
+                isFading = false;
+                showScreen('menuScreen');
+            }, 2500);
+            return;
+        }
+        const dialog = dialogs[index];
+        dialogSpeaker.textContent = dialog.speaker;
+        dialogSpeaker.className = 'dialog-speaker' + (dialog.speakerClass ? ' ' + dialog.speakerClass : '');
+        dialogText.textContent = dialog.text;
+        if (dialog.animation) {
+            mitaImage.src = dialog.animation;
+            mitaImage.style.opacity = '0';
+            setTimeout(() => { mitaImage.style.opacity = '1'; }, 50);
+        }
+        let audioFile = null;
+        if (currentLang === 'en' && dialog.audio_en) audioFile = dialog.audio_en;
+        else if (currentLang === 'ru' && dialog.audio_ru) audioFile = dialog.audio_ru;
+        else audioFile = dialog.audio_ru || dialog.audio_en;
+
+        if (audioFile) {
+            if (dialogAudio) { dialogAudio.pause(); dialogAudio.currentTime = 0; }
+            dialogAudio = new Audio(audioFile);
+            // Защита от IndexSizeError: volume строго в диапазоне [0, 1]
+            let v = (typeof data.voiceVolume === 'number') ? data.voiceVolume : VOICE_VOLUME;
+            if (v > 1) v = 1;
+            if (v < 0) v = 0;
+            try {
+                dialogAudio.volume = v;
+            } catch(err) {
+                dialogAudio.volume = 1;
+            }
+            dialogAudio.play().catch(()=>{});
+        }
+        currentDialogIndex = index;
+    }
+
+    function nextDialog() {
+        if (isFading) return;
+        if (dialogAudio && !dialogAudio.paused) { dialogAudio.pause(); dialogAudio.currentTime = 0; }
+        showDialog(currentDialogIndex + 1, currentChar);
+    }
+
+    dialogContinue.addEventListener('click', e => { e.stopPropagation(); nextDialog(); });
+    dialogBox.addEventListener('click', function(e) {
+        if (e.target === this || e.target.closest('.dialog-text') || e.target.closest('.dialog-speaker')) nextDialog();
+    });
+
+    // ===== КРЕСТИКИ-НОЛИКИ =====
+    let tttStats = {
+        easy:   { wins: 0, losses: 0, draws: 0 },
+        normal: { wins: 0, losses: 0, draws: 0 },
+        hard:   { wins: 0, losses: 0, draws: 0 }
+    };
+    let avatarData = null;
+
+    let tttBoard = ['','','','','','','','',''];
+    let tttCurrentDiff = 'easy';
+    let tttGameOver = false;
+    let tttPlayerSymbol = 'X';
+    let tttAISymbol = 'O';
+    let tttPlayerTurn = true;
+
+    const tttBoardEl = document.getElementById('tttBoard');
+    const tttStatusEl = document.getElementById('tttStatus');
+    const tttWinsEl = document.getElementById('tttWins');
+    const tttLossesEl = document.getElementById('tttLosses');
+    const tttDrawsEl = document.getElementById('tttDraws');
+    const tttWinrateEl = document.getElementById('tttWinrate');
+    const tttProfileStats = document.getElementById('tttProfileStats');
+    const tttResetBtn = document.getElementById('tttReset');
+    const tttAvatarEl = document.getElementById('tttAvatar');
+    const avatarInput = document.getElementById('avatarInput');
+
+    function buildBoard() {
+        tttBoardEl.innerHTML = '';
+        for (let i = 0; i < 9; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'ttt-cell';
+            cell.dataset.index = i;
+            cell.addEventListener('click', () => tttCellClick(i));
+            tttBoardEl.appendChild(cell);
+        }
+    }
+
+    function renderBoard() {
+        const cells = tttBoardEl.querySelectorAll('.ttt-cell');
+        cells.forEach((cell, i) => {
+            cell.textContent = tttBoard[i];
+            cell.classList.remove('x','o');
+            if (tttBoard[i] === 'X') cell.classList.add('x');
+            if (tttBoard[i] === 'O') cell.classList.add('o');
+            if (tttBoard[i] !== '' || tttGameOver) cell.classList.add('disabled');
+        });
+    }
+
+    function tttCellClick(i) {
+        if (tttGameOver || !tttPlayerTurn || tttBoard[i] !== '') return;
+        tttBoard[i] = tttPlayerSymbol;
+        renderBoard();
+        const winner = checkWinner(tttBoard);
+        if (winner) return endTTT(winner);
+        if (isBoardFull(tttBoard)) return endTTT('draw');
+        tttPlayerTurn = false;
+        tttStatusEl.textContent = t('ttt_ai_turn');
+        setTimeout(aiMove, 350);
+    }
+
+    function aiMove() {
+        if (tttGameOver) return;
+        let move;
+        if (tttCurrentDiff === 'easy') {
+            move = randomMove(tttBoard);
+        } else if (tttCurrentDiff === 'normal') {
+            move = Math.random() < 0.5 ? findBestMove(tttBoard, tttAISymbol, tttPlayerSymbol) : randomMove(tttBoard);
+        } else {
+            move = findBestMove(tttBoard, tttAISymbol, tttPlayerSymbol);
+        }
+        if (move === -1) return;
+        tttBoard[move] = tttAISymbol;
+        renderBoard();
+        const winner = checkWinner(tttBoard);
+        if (winner) return endTTT(winner);
+        if (isBoardFull(tttBoard)) return endTTT('draw');
+        tttPlayerTurn = true;
+        tttStatusEl.textContent = t('ttt_your_turn');
+    }
+
+    function randomMove(board) {
+        const empty = [];
+        board.forEach((v,i) => { if (v==='') empty.push(i); });
+        if (empty.length === 0) return -1;
+        return empty[Math.floor(Math.random()*empty.length)];
+    }
+
+    function isBoardFull(board) {
+        return board.every(v => v !== '');
+    }
+
+    function checkWinner(board) {
+        const lines = [
+            [0,1,2],[3,4,5],[6,7,8],
+            [0,3,6],[1,4,7],[2,5,8],
+            [0,4,8],[2,4,6]
+        ];
+        for (const [a,b,c] of lines) {
+            if (board[a] && board[a] === board[b] && board[a] === board[c]) return board[a];
+        }
+        return null;
+    }
+
+    function findBestMove(board, aiSym, playerSym) {
+        let best = -Infinity;
+        let bestMove = -1;
+        for (let i = 0; i < 9; i++) {
+            if (board[i] === '') {
+                board[i] = aiSym;
+                const score = minimax(board, 0, false, aiSym, playerSym);
+                board[i] = '';
+                if (score > best) { best = score; bestMove = i; }
+            }
+        }
+        return bestMove;
+    }
+
+    function minimax(board, depth, isMax, aiSym, playerSym) {
+        const winner = checkWinner(board);
+        if (winner === aiSym) return 10 - depth;
+        if (winner === playerSym) return depth - 10;
+        if (isBoardFull(board)) return 0;
+
+        if (isMax) {
+            let best = -Infinity;
+            for (let i = 0; i < 9; i++) {
+                if (board[i] === '') {
+                    board[i] = aiSym;
+                    best = Math.max(best, minimax(board, depth+1, false, aiSym, playerSym));
+                    board[i] = '';
+                }
+            }
+            return best;
+        } else {
+            let best = Infinity;
+            for (let i = 0; i < 9; i++) {
+                if (board[i] === '') {
+                    board[i] = playerSym;
+                    best = Math.min(best, minimax(board, depth+1, true, aiSym, playerSym));
+                    board[i] = '';
+                }
+            }
+            return best;
+        }
+    }
+
+    function endTTT(result) {
+        tttGameOver = true;
+        const stats = tttStats[tttCurrentDiff];
+        if (result === 'X') {
+            tttStatusEl.textContent = t('ttt_win');
+            stats.wins++;
+            showConfetti();
+        } else if (result === 'O') {
+            tttStatusEl.textContent = t('ttt_lose');
+            stats.losses++;
+        } else {
+            tttStatusEl.textContent = t('ttt_draw');
+            stats.draws++;
+        }
+        updateTTTStatsUI();
+        saveProgress();
+        renderBoard();
+    }
+
+    function showConfetti() {
+        confettiEl.innerHTML = '';
+        confettiEl.classList.add('show');
+        const colors = ['#f09bc0', '#8ab4f8', '#b77aff', '#ffd966', '#ff8eb5'];
+        for (let i = 0; i < 30; i++) {
+            const piece = document.createElement('div');
+            piece.className = 'confetti-piece';
+            piece.style.left = Math.random() * 100 + '%';
+            piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+            piece.style.animationDelay = (Math.random() * 0.3) + 's';
+            piece.style.animationDuration = (1.3 + Math.random() * 0.7) + 's';
+            piece.style.width = (4 + Math.random() * 4) + 'px';
+            piece.style.height = (4 + Math.random() * 4) + 'px';
+            confettiEl.appendChild(piece);
+        }
+        setTimeout(() => {
+            confettiEl.classList.remove('show');
+            confettiEl.innerHTML = '';
+        }, 2200);
+    }
+
+    function resetTTT() {
+        tttBoard = ['','','','','','','','',''];
+        tttGameOver = false;
+        tttPlayerTurn = true;
+        tttStatusEl.textContent = t('ttt_your_turn');
+        renderBoard();
+    }
+
+    function updateTTTStatsUI() {
+        const s = tttStats[tttCurrentDiff];
+        tttWinsEl.textContent = s.wins;
+        tttLossesEl.textContent = s.losses;
+        tttDrawsEl.textContent = s.draws;
+        const total = s.wins + s.losses + s.draws;
+        const winrate = total > 0 ? Math.round((s.wins / total) * 100) : 0;
+        tttWinrateEl.textContent = winrate + '%';
+        tttProfileStats.textContent = winrate + '% ' + t('ttt_wins').toLowerCase();
+    }
+
+    document.querySelectorAll('.diff-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            tttCurrentDiff = this.dataset.diff;
+            resetTTT();
+            updateTTTStatsUI();
+        });
+    });
+
+    tttResetBtn.addEventListener('click', () => resetTTT());
+
+    tttAvatarEl.addEventListener('click', () => avatarInput.click());
+    avatarInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            avatarData = e.target.result;
+            tttAvatarEl.innerHTML = '<img src="' + avatarData + '" alt="avatar">';
+            saveProgress();
+        };
+        reader.readAsDataURL(file);
+    });
+
+    function unlockAudioOnce() {
+        if (!audioEnabled) enableAudio();
+        document.removeEventListener('click', unlockAudioOnce);
+        document.removeEventListener('touchstart', unlockAudioOnce);
+    }
+    document.addEventListener('click', unlockAudioOnce);
+    document.addEventListener('touchstart', unlockAudioOnce);
+
+    // ===== ИНИЦИАЛИЗАЦИЯ =====
+    loadProgress();
+    applyLang();
+    buildBoard();
+    resetTTT();
+    updateTTTStatsUI();
+
+    if (avatarData) {
+        tttAvatarEl.innerHTML = '<img src="' + avatarData + '" alt="avatar">';
+    }
+
+    runSplash();
+
+    console.log('MiSide: Error — релизная версия');
+})();
 </script>
 </body>
 </html>
